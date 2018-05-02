@@ -8,8 +8,8 @@
 
 #define LED_PWM_PIN 3
 
-TPinOutput led1(LED_BUILTIN, OUTPUT);
-TPinOutput led2(LED_PWM_PIN, OUTPUT);
+TPinOutput led1(LED_BUILTIN);
+TPinOutput led2(LED_PWM_PIN);
 
 void setup()
 {  

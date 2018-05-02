@@ -12,7 +12,7 @@
 #define LED_PWM_PIN 3
 #define ANALOG_INPUT_PIN A0
 
-TPinOutput led(LED_PWM_PIN, OUTPUT);
+TPinOutput led(LED_PWM_PIN);
 TPinInput pot(ANALOG_INPUT_PIN, INPUT);
 
 void potCallback(byte pin, int state)
