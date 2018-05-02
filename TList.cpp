@@ -41,7 +41,7 @@ void TList::detachFrom(TBase* obj)
 
 TList::TList(byte size) : TBase()
 {
-#ifdef TDUINO_LIST_SIZE > 0
+#if TDUINO_LIST_SIZE > 0
   //Silence the warning
   size++;
 #else

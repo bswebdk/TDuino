@@ -44,7 +44,7 @@ private:
     virtual void setup() {};
   } dummy;
   
-#ifdef TDUINO_LIST_SIZE > 0
+#if TDUINO_LIST_SIZE > 0
   TBase* ptrList[TDUINO_LIST_SIZE];
   const byte size = TDUINO_LIST_SIZE;
 #else

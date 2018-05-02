@@ -3,7 +3,7 @@
 #define PINTASK_PULSE 1
 #define PINTASK_OSCILLATE 2
 
-TPinOutput::TPinOutput(byte pin, byte mode) : TPin(pin, mode)
+TPinOutput::TPinOutput(byte pin) : TPin(pin, OUTPUT)
 {
    this->task = 0;
 }

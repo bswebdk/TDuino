@@ -44,10 +44,12 @@ public:
 
   /**
 	* \brief Constructs an instance of TPinOutput.
+	*
+	* Constructs an instance of TPinOutput with pin mode set as OUTPUT.
 	* 
 	* \see TPin::TPin()
 	*/
-  TPinOutput(byte pin, byte mode);
+  TPinOutput(byte pin);
   
   /**
 	* \fn oscillate(unsigned int intervalRising, unsigned int intervalFalling, unsigned int repetitions, byte initialState, byte stateLowest, byte stateHighest)
