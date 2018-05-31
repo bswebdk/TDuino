@@ -5,7 +5,7 @@ quickly implement basic timing features and different pin actions with only a fe
 of code.
 
 __CODE @ https://github.com/bswebdk/tduino/__ <br/>
-__DOCS @ https://tduino.bruchhaus.dk/__
+__DOCS @ http://tduino.bruchhaus.dk/__
 
 ## Installation
 
