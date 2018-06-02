@@ -31,30 +31,31 @@ bool TPin::isPinValid(const char *token)
 }
 #endif //TDUINO_DEBUG
 
-void TPin::setMode(int mode)
+void TPin::defaults()
 {
-  //Skal måske flyttes til "attach()"
-  this->mode = mode;
-  this->analog = (pin >= A0) && (pin < A0 + NUM_ANALOG_INPUTS);
-  pinMode(pin, mode);
-}
-
-TPin::TPin() : TBase()
-{
+  TBase::defaults();
   this->pin = 255;
   this->mode = 255;
   this->analog = false;
 }
 
-TPin::TPin(byte pin, byte mode) : TBase()
+TPin::TPin() : TBase()
 {
+  defaults();
+}
+
+TPin::TPin(byte pin, byte mode)
+{
+  defaults();
   attach(pin, mode);
 }
   
 void TPin::attach(byte pin, byte mode)
 {
   this->pin = pin;
-  setMode(mode);
+  this->mode = mode;
+  this->analog = (pin >= A0) && (pin < A0 + NUM_ANALOG_INPUTS);
+  pinMode(pin, mode);
 }
 
 void TPin::enable(byte on)

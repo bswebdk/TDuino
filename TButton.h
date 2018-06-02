@@ -27,7 +27,10 @@
  * \brief Handles simple push buttons.
  * 
  * This class is used to attach a callback event to a pin which has a push buttons
- * attached to it.
+ * attached to it. By default a TButton instance is initialized with a debounce of
+ * 20 milliseconds, you can change this with setDebounce().
+ * 
+ * \see TButton::setDebounce()
 */
 class TButton : protected TPinInput {
 
@@ -35,8 +38,8 @@ private:
   unsigned int delay1, delay2;
   unsigned long lastRepeat;
 
-/// \cond HIDDEN_FIELD
 protected:
+/// \cond HIDDEN_FIELD
   virtual void defaults();
   virtual void falling();
 /// \endcond

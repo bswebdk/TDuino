@@ -40,6 +40,11 @@ private:
 
   void counter();
 
+protected:
+/// \cond HIDDEN_FIELD
+  virtual void defaults();
+/// \endcond
+
 public:
 
   /**

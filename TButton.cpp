@@ -23,8 +23,10 @@
 
 void TButton::defaults()
 {
-   TPinInput::defaults();
-   debounce = 10;
+  TPinInput::defaults();
+  debounce = 20;
+  delay1 = 0;
+  delay2 = 0;
 }
 
 void TButton::falling()
@@ -33,16 +35,15 @@ void TButton::falling()
   TPinInput::falling();
 }
 
-TButton::TButton() : TPinInput()
+TButton::TButton()
 {
-  delay1 = 0;
-  delay2 = 0;
+  defaults();
 }
 
-TButton::TButton(byte pin) : TPinInput(pin, INPUT_PULLUP)
+TButton::TButton(byte pin)
 {
-  delay1 = 0;
-  delay2 = 0;
+  defaults();
+  attach(pin, INPUT_PULLUP);
 }
 
 void TButton::attach(byte pin, byte mode)

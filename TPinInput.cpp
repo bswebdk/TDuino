@@ -26,6 +26,7 @@ void dummy_callback(byte b, int i) {}
 
 void TPinInput::defaults()
 {
+  TPin::defaults();
   this->sampleIdx = 0;
   this->sampleVal = 0;
   this->samples = 0;
@@ -47,14 +48,15 @@ void TPinInput::rising()
   callbacks[1](pin, lastState);
 }
 
-TPinInput::TPinInput() : TPin()
+TPinInput::TPinInput()
 {
   defaults();
 }
 
-TPinInput::TPinInput(byte pin, byte mode) : TPin(pin, mode)
+TPinInput::TPinInput(byte pin, byte mode)
 {
   defaults();
+  attach(pin, mode);
 }
   
 TPinInput::~TPinInput()

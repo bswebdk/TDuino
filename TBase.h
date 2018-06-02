@@ -68,6 +68,42 @@ protected:
 
   unsigned long loopMillis; //!< The value of millis() to be used within loop()
   
+  /**
+   * \brief Method used to reset all class internal variables.
+   * 
+   * Implemented to avoid inheritance issues when overriding constructors who needs
+   * to change the default values of their parent classes. Instead of overriding a
+   * constructor like this:
+   * 
+   * \code
+   * TMyClass::TMyClass() : TBase()
+   * {
+   *   this->some_value = 0;
+   * }
+   * \endcode
+   * 
+   * You should override defaults() and call it in your constructor like this:
+   * 
+   * \code
+   * TMyClass::defaults()
+   * {
+   *   TBase::defaults();
+   *   this->some_value = 0;
+   * }
+   * 
+   * TMyClass::TMyClass()
+   * {
+   *   defaults();
+   * }
+   * \endcode
+   * 
+   * Doing it this way will ensure that all class internal variables are
+   * initialized to their default values in the right order. It will also
+   * allow any child classes to modify the default values of their parents
+   * in the construction phase.
+   */
+  virtual void defaults();
+  
 public:
 
   /**

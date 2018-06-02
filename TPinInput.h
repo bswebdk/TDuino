@@ -52,14 +52,9 @@ protected:
   unsigned int debounce; ///< The amount of debounce used with the pin.
   unsigned long changeMillis; ///< The time of the last state change
 
-  /**
-   * \brief Method used to reset all class internal variables.
-   * 
-   * This method is called by various constructors when all the private and
-   * protected values are to be reset to their default values. You can override
-   * this method if you need to change any default value of TPinInput.
-   */
+/// \cond HIDDEN_FIELD
   virtual void defaults();
+/// \endcond
   
   /**
 	* \brief Method called when the pins state is falling.

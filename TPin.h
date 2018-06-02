@@ -41,16 +41,10 @@ protected:
   byte mode; ///< The mode used for the pin (INPUT / INPUT_PULLUP / OUTPUT).
   bool analog; ///< True if the pin is detected as being an analog pin.
 
-  /**
-   * \brief Set the pin's mode.
-   * 
-   * If you want to change the pins mode to something else than what was
-   * defined in the constructor, you can do it by calling setMode().
-   * 
-   * \see getMode() TPin()
-   */
-  void setMode(int mode);
-
+/// \cond HIDDEN_FIELD
+  virtual void defaults();
+/// \endcond
+  
 public:
 
   /**

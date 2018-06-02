@@ -21,12 +21,17 @@
 
 #include "TBase.h"
 
-TBase::TBase()
+void TBase::defaults()
 {
   this->loopMillis = 0;
 #ifdef TDUINO_DEBUG
   this->attachedTo = NULL;
 #endif
+}
+
+TBase::TBase()
+{
+  defaults();
 }
 
 TBase::~TBase()
