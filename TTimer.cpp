@@ -150,6 +150,14 @@ void TTimer::stop(byte index)
 
 void TTimer::loop()
 {
+#ifdef TDUINO_DEBUG
+  if (memError > 0)
+  {
+     TDuino_Error(TDUINO_ERROR_NOT_ENOUGH_MEMORY, memError, PSTR("TTimer"));
+     memError = 0;
+  }
+#endif //TDUINO_DEBUG
+
   TBase::loop();
   for (byte i = 0; i < this->numTimers; i++)
   {
@@ -162,12 +170,5 @@ void TTimer::loop()
       if ((current->repeat > 0) && (current->count >= current->repeat)) current->active = false; 
     }
   }
-}
-
-void TTimer::setup()
-{
-#ifdef TDUINO_DEBUG
-  if (memError > 0) TDuino_Error(TDUINO_ERROR_NOT_ENOUGH_MEMORY, memError, "TTimer");
-#endif
 }
 

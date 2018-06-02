@@ -53,6 +53,15 @@ protected:
   unsigned long changeMillis; ///< The time of the last state change
 
   /**
+   * \brief Method used to reset all class internal variables.
+   * 
+   * This method is called by various constructors when all the private and
+   * protected values are to be reset to their default values. You can override
+   * this method if you need to change any default value of TPinInput.
+   */
+  virtual void defaults();
+  
+  /**
 	* \brief Method called when the pins state is falling.
 	* 
 	* This method is called whenever the pin state is detected as being lower than
@@ -73,16 +82,22 @@ protected:
 public:
 
   /**
-	* \brief The contructor for the pin class.
-	* \param pin The pin to be used by this instance.
-	* \param mode The mode to be used with the pin.
-	* 
-	* Constructs an instance of the pin class and sets #pin and #mode to the arguments
-   * given. The constructor tests wheter the pin is analog and stores the result
-   * in #analog.
+   * \brief The default contructor for the TPinInput class.
    * 
-   * Valid arguments for mode are INPUT and INPUT_PULLUP.
-	*/
+   * Please see docs for the default constructor of TPin.
+   * 
+   * \see TPin::TPin() attach()
+   */
+  TPinInput();
+  
+  /**
+   * \brief The contructor for the pin class.
+   * \param pin The pin to be used by this instance.
+   * \param mode The mode to be used with the pin.
+   * 
+   * \see TPin::TPin(byte, byte) for further info.
+   * \see attach() for valid values.
+   */
   TPinInput(byte pin, byte mode = INPUT);
   
   /**
@@ -91,6 +106,18 @@ public:
 	* Releases any memory used for sample buffer.
 	*/
   virtual ~TPinInput();
+  
+  /**
+   * \brief Attach the instance of TPinInput to a pin.
+   * \param pin See TPin::attach()
+   * \param mode See TPin::attach()
+   * 
+   * Valid values for mode are INPUT and INPUT_PULLUP - if any other value
+   * if provided, INPUT is used.
+   * 
+   * \see TPin::attach()
+   */
+  virtual void attach(byte pin, byte mode = INPUT);
   
   /**
    * \brief Get the average value of multiple readings from the pin.
@@ -215,16 +242,6 @@ public:
 	* \see onRising() onFalling() rising() falling() TPin::loop()
 	*/
   virtual void loop();
-
-  /**
-	* \brief The pin's setup method.
-	* 
-	* Used to setup the pin. Must be called before any other initialization of the pin
-   * is performed.
-   * 
-   * \see TPin::setup()
-	*/
-  virtual void setup();
 
   /**
 	* \brief Assign a callback to handle falling pin state.

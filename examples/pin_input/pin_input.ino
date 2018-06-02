@@ -25,10 +25,6 @@ void potCallback(byte pin, int state)
 
 void setup()
 {
-  //Setup pins first
-  led.setup();
-  pot.setup();
-   
   //Attach the same callback to both rising and falling state
   //of the potentiometer. You could use two different callbacks
   //(one for rise and one for fall) if you wanted to :)

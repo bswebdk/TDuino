@@ -22,47 +22,96 @@
 #include "TPin.h"
 #include <pins_arduino.h>
 
+#ifdef TDUINO_DEBUG
+bool TPin::isPinValid(const char *token)
+{
+  if ((pin != 255) && (mode != 255)) return true;
+  TDuino_Error(TDUINO_ERROR_INVALID_PIN, pin, token);
+  return false;
+}
+#endif //TDUINO_DEBUG
+
+void TPin::setMode(int mode)
+{
+  //Skal måske flyttes til "attach()"
+  this->mode = mode;
+  this->analog = (pin >= A0) && (pin < A0 + NUM_ANALOG_INPUTS);
+  pinMode(pin, mode);
+}
+
+TPin::TPin() : TBase()
+{
+  this->pin = 255;
+  this->mode = 255;
+  this->analog = false;
+}
+
 TPin::TPin(byte pin, byte mode) : TBase()
+{
+  attach(pin, mode);
+}
+  
+void TPin::attach(byte pin, byte mode)
 {
   this->pin = pin;
   setMode(mode);
 }
-  
+
 void TPin::enable(byte on)
 {
+#ifdef TDUINO_DEBUG
+  if (!isPinValid(PSTR("TPin::enable"))) return;
+#endif //TDUINO_DEBUG
   digitalWrite(pin, on);
 }
 
 void TPin::flip()
 {
+#ifdef TDUINO_DEBUG
+  if (!isPinValid(PSTR("TPin::flip"))) return;
+#endif //TDUINO_DEBUG
   digitalWrite(pin, digitalRead(pin) ^ 1);
 }
 
 void TPin::off()
 {
+#ifdef TDUINO_DEBUG
+  if (!isPinValid(PSTR("TPin::off"))) return;
+#endif //TDUINO_DEBUG
   digitalWrite(pin, LOW);
 }
 
 void TPin::on()
 {
+#ifdef TDUINO_DEBUG
+  if (!isPinValid(PSTR("TPin::on"))) return;
+#endif //TDUINO_DEBUG
   digitalWrite(pin, HIGH);
 }
 
 void TPin::pwm(byte value)
 {
 #ifdef TDUINO_DEBUG
-  if (!hasPwm()) TDuino_Error(TDUINO_ERROR_INVALID_OPERATION, pin, PSTR("TPin::pwm"));
-#endif
+  const char *token = PSTR("TPin::pwm");
+  if (!isPinValid(token)) return;
+  if (!hasPwm()) TDuino_Error(TDUINO_ERROR_INVALID_OPERATION, pin, token);
+#endif //TDUINO_DEBUG
   analogWrite(pin, value);
 }
 
 int TPin::read()
 {
+#ifdef TDUINO_DEBUG
+  if (!isPinValid(PSTR("TPin::read"))) return 0;
+#endif //TDUINO_DEBUG
   return analog ? analogRead(pin) : digitalRead(pin);
 }
 
 int TPin::state()
 {
+#ifdef TDUINO_DEBUG
+  if (!isPinValid(PSTR("TPin::state"))) return 0;
+#endif //TDUINO_DEBUG
    return digitalRead(pin);
 }
 
@@ -81,28 +130,7 @@ int TPin::getMode()
   return mode;
 }
 
-void TPin::setMode(int mode)
-{
-  this->mode = mode;
-  this->analog = (pin >= A0) && (pin < A0 + NUM_ANALOG_INPUTS);
-  pinMode(pin, mode);
-}
-
-
 int TPin::getPin()
 {
   return pin;
 }
-
-void TPin::setup()
-{
-  //Following line is not needed
-  //pinMode(pin, mode);
-}
-
-//TPin code : 5364 bytes / 17%  || 3788 bytes / 12%
-//TPin vars: 289  bytes / 14%  || 272  bytes / 13%
-//TPinExt code : 5474 bytes / 17%
-//TPinExt vars : 307  bytes / 14%
-
-

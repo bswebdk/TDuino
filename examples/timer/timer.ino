@@ -34,11 +34,6 @@ void timerCallback(byte timerIndex)
 
 void setup()
 {  
-   //Setup pins and timer first
-   led1.setup();
-   led2.setup();
-   timer.setup();
-   
    //Set first timer to 250ms delay and 0 (indefinite) repetitions
    timer.set(0, 250, 0); 
    

@@ -13,10 +13,6 @@ TPinOutput led2(LED_PWM_PIN);
 
 void setup()
 {  
-   //Setup pins first
-   led1.setup();
-   led2.setup();
-   
    //Start pulsing the builtin LED
    led1.pulse(500);
    

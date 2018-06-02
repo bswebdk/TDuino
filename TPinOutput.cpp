@@ -3,9 +3,19 @@
 #define PINTASK_PULSE 1
 #define PINTASK_OSCILLATE 2
 
+TPinOutput::TPinOutput() : TPin()
+{
+   this->task = 0;
+}
+
 TPinOutput::TPinOutput(byte pin) : TPin(pin, OUTPUT)
 {
    this->task = 0;
+}
+
+void TPinOutput::attach(byte pin, byte mode)
+{
+  TPin::attach(pin, OUTPUT);
 }
 
 void TPinOutput::counter()

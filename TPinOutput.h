@@ -43,13 +43,33 @@ private:
 public:
 
   /**
-	* \brief Constructs an instance of TPinOutput.
-	*
-	* Constructs an instance of TPinOutput with pin mode set as OUTPUT.
-	* 
-	* \see TPin::TPin()
-	*/
+   * \brief Default constructor for TPinOutput.
+   *
+   * Please see docs for the default constructor of TPin.
+   * 
+   * \see TPin::TPin() attach()
+   */
+  TPinOutput();
+  
+  /**
+   * \brief Constructs an instance of TPinOutput.
+   *
+   * Constructs an instance of TPinOutput with pin mode set as OUTPUT.
+   * 
+   * \see TPin::TPin()
+   */
   TPinOutput(byte pin);
+  
+  /**
+   * \brief Attach the instance of TPinOutput to a pin.
+   * \param pin See TPin::attach()
+   * \param mode See TPin::attach()
+   * 
+   * The value of mode is ignored, always set to OUTPUT.
+   * 
+   * \see TPin()::attach()
+   */
+  virtual void attach(byte pin, byte mode = INPUT);
   
   /**
 	* \fn oscillate(unsigned int intervalRising, unsigned int intervalFalling, unsigned int repetitions, byte initialState, byte stateLowest, byte stateHighest)

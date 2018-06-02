@@ -167,6 +167,13 @@ const PROGMEM byte TDUINO_ERROR_INVALID_OPERATION = 6;
 const PROGMEM byte TDUINO_ERROR_NOT_ENOUGH_MEMORY = 7;
 
 /**
+ * \brief Error used when trying to use an uninitialized instance of TPin
+ * or any derived classes (TPinInput, TPinOutput, TButton). Usually caused
+ * when the default constructor was used and TPin::attach() was not called
+ */
+const PROGMEM byte TDUINO_ERROR_INVALID_PIN = 8;
+
+/**
  * \brief Warning used when reading an output pin or writing an input pin.
  */
 const PROGMEM byte TDUINO_WARNING_BAD_PINMODE = 100;

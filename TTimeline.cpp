@@ -141,6 +141,14 @@ void TTimeline::stop(byte index)
 
 void TTimeline::loop()
 {
+#ifdef TDUINO_DEBUG
+  if (memError > 0)
+  {
+     TDuino_Error(TDUINO_ERROR_NOT_ENOUGH_MEMORY, memError, PSTR("TTimeline"));
+     memError = 0;
+  }
+#endif //TDUINO_DEBUG
+
   TBase::loop();
   for (byte i = 0; i < numSlots; i++)
   {
@@ -162,11 +170,4 @@ void TTimeline::loop()
       if (current->duration > 0) (*callback)(i, 0.0f); //Make sure that transition starts from 0.0f
     } 
   }
-}
-
-void TTimeline::setup()
-{
-#ifdef TDUINO_DEBUG
-  if (memError > 0) TDuino_Error(TDUINO_ERROR_NOT_ENOUGH_MEMORY, memError, "TTimeline");
-#endif
 }

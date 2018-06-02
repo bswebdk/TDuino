@@ -60,7 +60,6 @@ struct TTIMER_SLOT
  * 
  * void setup()
  * {
- *   timer.setup();
  *   timer.set(0, 500, 0);
  *   timer.set(1, 1000, 0);
  * }
@@ -87,8 +86,8 @@ private:
   byte dummy;
   
 #ifdef TDUINO_DEBUG
-  byte memError;
   bool badIndex(byte index, const char* token);
+  byte memError;
 #endif
   
 public:
@@ -238,12 +237,6 @@ public:
 	*/
   virtual void loop();
 
-  /**
-   * \brief Setup the timer
-   * 
-   * \see TBase::setup()
-   */
-  virtual void setup();
 };
 
 #endif //TTIMER_H

@@ -39,10 +39,6 @@ void buttonPress(byte buttonPin, int state)
 
 void setup()
 {
-  //Setup the LED and the button first
-  led.setup();
-  button.setup();
-
   //Attach callback to button
   button.onPress(buttonPress);
 }

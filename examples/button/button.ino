@@ -25,10 +25,6 @@ void buttonRelease(byte buttonPin, int state)
 
 void setup()
 {
-  //Setup the LED and the button first
-  led.setup();
-  button.setup();
-  
   //Attach callbacks
   button.onPress(buttonPress);
   button.onRelease(buttonRelease);
@@ -37,6 +33,9 @@ void setup()
   //to blink in the specified rate (200ms) when the button
   //is held down for more than 500 milliseconds.
   button.setRepeat(500, 200);
+  
+  //Ensure the LED is off for starters
+  led.off();
 }
 
 void loop()

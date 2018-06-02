@@ -30,7 +30,10 @@
  */
 class TPin : public TBase {
 
-//private:
+#ifdef TDUINO_DEBUG
+private:
+  bool isPinValid(const char *token = NULL);
+#endif //TDUINO_DEBUG
 
 protected:
 
@@ -38,18 +41,54 @@ protected:
   byte mode; ///< The mode used for the pin (INPUT / INPUT_PULLUP / OUTPUT).
   bool analog; ///< True if the pin is detected as being an analog pin.
 
+  /**
+   * \brief Set the pin's mode.
+   * 
+   * If you want to change the pins mode to something else than what was
+   * defined in the constructor, you can do it by calling setMode().
+   * 
+   * \see getMode() TPin()
+   */
+  void setMode(int mode);
+
 public:
 
   /**
-	* \brief The contructor for the pin class.
-	* \param pin The pin to be used by this instance.
-	* \param mode The mode to be used with the pin.
-	* 
-	* Constructs an instance of the pin class and sets #pin and #mode to
-	* the arguments given. The constructor tests wheter the pin is analog
-	* and stores the result in #analog.
-	*/
+   * \brief Default constructor for the TPin class.
+   * 
+   * The constructor will set the pin and mode to invalid values. You MUST
+   * call TPin::attach() before the instance of TPin is of any use.
+   * 
+   * \see attach()
+   */
+  TPin();
+  
+  /**
+   * \brief The contructor for the pin class.
+   * \param pin The pin to be used by this instance.
+   * \param mode The mode to be used with the pin.
+   * 
+   * Constructs an instance of the TPin class and calls attach() in order to setup
+   * the pin with the values provided.
+   *
+   * \see attach() 
+   */
   TPin(byte pin, byte mode);
+  
+  /**
+   * \brief Attach the instance of TPin to a pin.
+   * \param pin The pin to which the instance should be attached.
+   * \param mode The mode to be used for the pin.
+   * 
+   * If you are using the default constructor which takes no arguments
+   * (eg. if creating an array of TPin), you MUST call attach() on each instance
+   * of TPin in order for the pin to work.
+   * 
+   * attach() will store the values provided as arguments in #pin and #mode and test
+   * wheter the pin is analog and store the value in #analog. When this is done, the
+   * mode of the pin will be selected with pinMode().
+   */
+  virtual void attach(byte pin, byte mode = INPUT);
   
   /**
    * \brief Enable / disable a digital pin.
@@ -154,16 +193,6 @@ public:
   int getMode();
 
   /**
-   * \brief Set the pin's mode.
-   * 
-   * If you want to change the pins mode to something else than what was
-   * defined in the constructor, you can do it by calling setMode().
-   * 
-   * \see getMode() TPin()
-   */
-  void setMode(int mode);
-
-  /**
 	* \brief Get the pin's number.
 	* \returns The pin number.
 	* 
@@ -172,14 +201,6 @@ public:
 	* \see TPin().
 	*/
   int getPin();
-
-  /**
-	* \brief The pin's setup method.
-	* 
-	* Overrides TBase::setup() and performs setup for the pin. Usually this
-	* is nothing else than setting the pins mode.
-	*/
-  virtual void setup();
 
 };
 

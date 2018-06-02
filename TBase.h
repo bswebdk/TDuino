@@ -41,7 +41,6 @@
  *   ...
  * public:
  *   virtual void loop();
- *   virtual void setup();
  * };
  * 
  * // Source
@@ -53,12 +52,6 @@
  *   // field "loopMillis" for timing.
  * }
  * 
- * void TMyClass::setup()
- * {
- *   // Do not call TBase::setup() - it does not exist
- * 
- *   // Your own setup code goes here.
- * }
  * \endcode
 */
 
@@ -98,14 +91,6 @@ public:
 	*/
   virtual void loop();
   
-  /**
-	* \brief Initialization of any derived classes.
-	*
-	* The method is abstract and must be implemented by all subclasses even
-   * if they do not need to be setup.
-	*/
-  virtual void setup() = 0;
-  
 };
 
-#endif //TBASE_h
+#endif //TBASE_H

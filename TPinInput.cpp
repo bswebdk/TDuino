@@ -24,25 +24,8 @@
 //Used as a dummy to prevent one or two "if (callback)" statement(s) for each loop.
 void dummy_callback(byte b, int i) {}
 
-void TPinInput::falling()
+void TPinInput::defaults()
 {
-  //if (callbacks[0]) ( ( void (*) (byte, int) ) callbacks[0])(pin, state);
-  //( ( void (*) (byte, int) ) callbacks[0])(pin, lastState);
-  callbacks[0](pin, lastState);
-}
-
-void TPinInput::rising()
-{
-  //if (callbacks[1]) ( ( void (*) (byte, int) ) callbacks[1])(pin, state);
-  //( ( void (*) (byte, int) ) callbacks[1])(pin, lastState);
-  callbacks[1](pin, lastState);
-}
-
-TPinInput::TPinInput(byte pin, byte mode) : TPin(pin, mode)
-{
-#ifdef TDUINO_DEBUG
-  if ((mode != INPUT) && (mode != INPUT_PULLUP)) TDuino_Error(TDUINO_ERROR_BAD_PARAMETER, mode, PSTR("TPinInput::mode"));
-#endif
   this->sampleIdx = 0;
   this->sampleVal = 0;
   this->samples = 0;
@@ -53,10 +36,43 @@ TPinInput::TPinInput(byte pin, byte mode) : TPin(pin, mode)
   this->callbacks[0] = /*(void*)*/dummy_callback;//NULL;
   this->callbacks[1] = /*(void*)*/dummy_callback;//NULL;
 }
+
+void TPinInput::falling()
+{
+  callbacks[0](pin, lastState);
+}
+
+void TPinInput::rising()
+{
+  callbacks[1](pin, lastState);
+}
+
+TPinInput::TPinInput() : TPin()
+{
+  defaults();
+}
+
+TPinInput::TPinInput(byte pin, byte mode) : TPin(pin, mode)
+{
+  defaults();
+}
   
 TPinInput::~TPinInput()
 {
   if (sampleBuffer) delete[] sampleBuffer;
+}
+
+void TPinInput::attach(byte pin, byte mode)
+{
+  if ((mode != INPUT) && (mode != INPUT_PULLUP))
+  {
+  #ifdef TDUINO_DEBUG
+    if ((mode != INPUT) && (mode != INPUT_PULLUP)) TDuino_Error(TDUINO_ERROR_BAD_PARAMETER, mode, PSTR("TPinInput::mode"));
+  #endif //TDUINO_DEBUG
+    mode = INPUT;
+  }
+  TPin::attach(pin, mode);
+  lastState = read();
 }
 
 int TPinInput::read(byte samples)
@@ -69,7 +85,7 @@ int TPinInput::read(byte samples)
   }
 #else
   if (samples < 2) return -1;
-#endif
+#endif //TDUINO_DEBUG
   float res = 0;
   if (debounce > 0)
   {
@@ -202,12 +218,6 @@ void TPinInput::loop()
     
   }
 
-}
-
-void TPinInput::setup()
-{
-  TPin::setup();
-  lastState = read();
 }
 
 void TPinInput::onFalling(TPinInputCallback callback)

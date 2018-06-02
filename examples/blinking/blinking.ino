@@ -53,9 +53,6 @@ void method3()
 
 void setup()
 {
-   //Setup pin first
-   pin.setup();
-   
    //Turn the pin off for starters
    pin.off();
 }

@@ -21,16 +21,34 @@
 
 #include "TButton.h"
 
+void TButton::defaults()
+{
+   TPinInput::defaults();
+   debounce = 10;
+}
+
 void TButton::falling()
 {
   lastRepeat = loopMillis;
   TPinInput::falling();
 }
 
+TButton::TButton() : TPinInput()
+{
+  delay1 = 0;
+  delay2 = 0;
+}
+
 TButton::TButton(byte pin) : TPinInput(pin, INPUT_PULLUP)
 {
   delay1 = 0;
   delay2 = 0;
+}
+
+void TButton::attach(byte pin, byte mode)
+{
+  TPinInput::attach(pin, INPUT_PULLUP);
+  analog = false;
 }
 
 bool TButton::isPressed()
@@ -52,13 +70,6 @@ void TButton::onPress(TPinInputCallback callback)
 void TButton::onRelease(TPinInputCallback callback)
 {
   TPinInput::onRising(callback);
-}
-
-void TButton::setup()
-{
-  TPinInput::setup();
-  if (debounce == 0) debounce = 10;
-  analog = false; //Prevent analogRead in TPinInput::loop()
 }
 
 void TButton::loop()

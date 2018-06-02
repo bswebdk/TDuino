@@ -137,8 +137,8 @@ private:
   byte dummy;
 
 #ifdef TDUINO_DEBUG
-  byte memError;
   bool badIndex(byte i, const char *token);
+  byte memError;
 #endif
   
 public:
@@ -248,15 +248,6 @@ public:
    * \see TBase::loop()
    */
   virtual void loop();
-  
-  /**
-   * \brief Setup the time line.
-   * 
-   * Must be called in the sketch's setup() method.
-   * 
-   * \see TBase::setup()
-   */
-  virtual void setup();
   
 };
 

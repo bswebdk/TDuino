@@ -37,18 +37,41 @@ private:
 
 /// \cond HIDDEN_FIELD
 protected:
+  virtual void defaults();
   virtual void falling();
 /// \endcond
   
 public:
+   
   /**
-	* \brief Constructs an instance of TButton.
-	* 
-	* \param pin The pin on which the push button is attached.
-	* 
-	* The pin to be used with the button will be setup as INPUT_PULLUP.
-	*/
+   * \brief Default constructs for TButton.
+   * 
+   * Please see docs for the default constructor of TPin.
+   * 
+   * \see TPin::TPin() attach()
+   */
+  TButton();
+  
+  /**
+   * \brief Constructs an instance of TButton and attaches it to a pin.
+   * \param pin The pin on which the push button is attached.
+   * 
+   * Calls attach() with the defined pin.
+   * 
+   * \see attach()
+   */
   TButton(byte pin);
+  
+  /**
+   * \brief Attaches the instance of TButton to a pin.
+   * \param pin See TPin::attach()
+   * \param mode See TPin::attach()
+   * 
+   * The value of mode is ignored, always set to INPUT_PULLUP.
+   * 
+   * \see TPin::attach()
+   */
+  virtual void attach(byte pin, byte mode = INPUT);
   
   /**
 	* \brief Detects if the button is pressed / down.
@@ -92,16 +115,11 @@ public:
   void onRelease(TPinInputCallback callback);
 
   /**
-	* \brief Setup the button.
-	* 
-	* Setup will initialize debounce to 10 milliseconds if debounce is zero (default). If
-	* you want to disable debounce, you must call setDebounce() and pass a zero to it after
-   * you have called setup().
-	*/
-  virtual void setup();
-  
-  /**
 	* \brief The buttons loop phase.
+   * 
+   * Extends the functionality of TPinInput with a repeat functionality.
+   * 
+   * \see TPinInput::loop() setRepeat()
 	*/
   virtual void loop();
   
