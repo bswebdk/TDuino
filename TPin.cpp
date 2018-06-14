@@ -44,12 +44,6 @@ TPin::TPin() : TBase()
   defaults();
 }
 
-TPin::TPin(byte pin, byte mode)
-{
-  defaults();
-  attach(pin, mode);
-}
-  
 void TPin::attach(byte pin, byte mode)
 {
   this->pin = pin;

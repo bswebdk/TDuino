@@ -14,12 +14,6 @@ TPinOutput::TPinOutput()
    defaults();
 }
 
-TPinOutput::TPinOutput(byte pin)
-{
-   defaults();
-   attach(pin, OUTPUT);
-}
-
 void TPinOutput::attach(byte pin, byte mode)
 {
   TPin::attach(pin, OUTPUT);

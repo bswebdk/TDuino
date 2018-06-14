@@ -3,8 +3,8 @@
 
 #include <TDuino.h>
 
-//Use the builtin LED as output
-TPin pin(LED_BUILTIN, OUTPUT);
+//Declare the pin object
+TPin pin;
 
 //delay() is used in this example for simplification. Normally
 //you would never use delay() unless there are no other options!
@@ -53,7 +53,10 @@ void method3()
 
 void setup()
 {
-   //Turn the pin off for starters
+   //Attach LED to pin
+   pin.attach(LED_BUILTIN, OUTPUT);
+   
+   //Ensure the LED is off
    pin.off();
 }
 

@@ -12,8 +12,8 @@
 #define LED_PWM_PIN 3
 #define ANALOG_INPUT_PIN A0
 
-TPinOutput led(LED_PWM_PIN);
-TPinInput pot(ANALOG_INPUT_PIN, INPUT);
+TPinOutput led;
+TPinInput pot;
 
 void potCallback(byte pin, int state)
 {
@@ -25,6 +25,12 @@ void potCallback(byte pin, int state)
 
 void setup()
 {
+  //Attach the LED to pin 
+  led.attach(LED_PWM_PIN);
+  
+  //Attach the pot to pin
+  pot.attach(ANALOG_INPUT_PIN, INPUT);
+   
   //Attach the same callback to both rising and falling state
   //of the potentiometer. You could use two different callbacks
   //(one for rise and one for fall) if you wanted to :)

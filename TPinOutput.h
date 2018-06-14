@@ -57,15 +57,6 @@ public:
   TPinOutput();
   
   /**
-   * \brief Constructs an instance of TPinOutput.
-   *
-   * Constructs an instance of TPinOutput with pin mode set as OUTPUT.
-   * 
-   * \see TPin::TPin()
-   */
-  TPinOutput(byte pin);
-  
-  /**
    * \brief Attach the instance of TPinOutput to a pin.
    * \param pin See TPin::attach()
    * \param mode See TPin::attach()

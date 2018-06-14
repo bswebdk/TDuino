@@ -86,16 +86,6 @@ public:
   TPinInput();
   
   /**
-   * \brief The contructor for the pin class.
-   * \param pin The pin to be used by this instance.
-   * \param mode The mode to be used with the pin.
-   * 
-   * \see TPin::TPin(byte, byte) for further info.
-   * \see attach() for valid values.
-   */
-  TPinInput(byte pin, byte mode = INPUT);
-  
-  /**
 	* \brief The destructor for the class.
 	* 
 	* Releases any memory used for sample buffer.

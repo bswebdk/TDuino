@@ -51,23 +51,12 @@ public:
    * \brief Default constructor for the TPin class.
    * 
    * The constructor will set the pin and mode to invalid values. You MUST
-   * call TPin::attach() before the instance of TPin is of any use.
+   * call TPin::attach() during the setup phase of your sketch before the
+   * instance of TPin is of any use.
    * 
    * \see attach()
    */
   TPin();
-  
-  /**
-   * \brief The contructor for the pin class.
-   * \param pin The pin to be used by this instance.
-   * \param mode The mode to be used with the pin.
-   * 
-   * Constructs an instance of the TPin class and calls attach() in order to setup
-   * the pin with the values provided.
-   *
-   * \see attach() 
-   */
-  TPin(byte pin, byte mode);
   
   /**
    * \brief Attach the instance of TPin to a pin.

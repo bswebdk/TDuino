@@ -11,10 +11,10 @@
 #define BUTTON_PIN 4
 #define LED_PWM_PIN 3
 
-void tlCallback(byte slotIdx, float progress); //Forward declaration
+void tlCallback(byte slotIdx, float progress); //Prototype, fully declared later
 
-TPin led(LED_PWM_PIN, OUTPUT);
-TButton button(BUTTON_PIN);
+TPin led;
+TButton button;
 TTimeline tline(tlCallback, 2);
 byte currentSlot = 0;
 
@@ -39,6 +39,12 @@ void buttonPress(byte buttonPin, int state)
 
 void setup()
 {
+  //Attach LED to pin
+  led.attach(LED_PWM_PIN, OUTPUT);
+  
+  //Attach button to pin
+  button.attach(BUTTON_PIN);
+  
   //Attach callback to button
   button.onPress(buttonPress);
 }

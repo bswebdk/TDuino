@@ -8,8 +8,8 @@
 
 #define BUTTON_PIN 4
 
-TPin led(LED_BUILTIN, OUTPUT);
-TButton button(BUTTON_PIN);
+TPin led;
+TButton button;
 
 void buttonPress(byte buttonPin, int state)
 {
@@ -25,7 +25,10 @@ void buttonRelease(byte buttonPin, int state)
 
 void setup()
 {
-  //Attach callbacks
+  //Attach button to pin
+  button.attach(BUTTON_PIN);
+  
+  //Set button callbacks
   button.onPress(buttonPress);
   button.onRelease(buttonRelease);
   
@@ -34,7 +37,10 @@ void setup()
   //is held down for more than 500 milliseconds.
   button.setRepeat(500, 200);
   
-  //Ensure the LED is off for starters
+  //Attach LED to pin
+  led.attach(LED_BUILTIN, OUTPUT);
+  
+  //Ensure the LED is off
   led.off();
 }
 

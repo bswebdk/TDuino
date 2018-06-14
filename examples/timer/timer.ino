@@ -6,24 +6,27 @@
 
 #include <TDuino.h>
 
+#define NUM_LEDS 2
 #define LED_PWM_PIN 3
 
-void timerCallback(byte timerIndex); //Forward declaration
+const byte LED_PINS[NUM_LEDS] = { LED_BUILTIN, LED_PWM_PIN };
 
-TPin led1(LED_BUILTIN, OUTPUT);
-TPin led2(LED_PWM_PIN, OUTPUT);
+void timerCallback(byte timerIndex); //Prototype, fully declared later
+
+TPin leds[NUM_LEDS];
 TTimer timer(timerCallback, 3); //Three timer slots
+
 
 void timerCallback(byte timerIndex)
 {
   switch (timerIndex)
   {
     case(0): //First timer slot
-      led1.flip();
+      leds[0].flip();
       break;
     
     case(1): //Second timer slot
-      led2.flip();
+      leds[1].flip();
       break;
     
     case(2): //Third timer slot
@@ -33,7 +36,10 @@ void timerCallback(byte timerIndex)
 }
 
 void setup()
-{  
+{
+   //Attach LED's to pins
+   for (byte i = 0; i < NUM_LEDS; i++) leds[i].attach(LED_PINS[i], OUTPUT);
+   
    //Set first timer to 250ms delay and 0 (indefinite) repetitions
    timer.set(0, 250, 0); 
    
@@ -46,9 +52,8 @@ void setup()
 
 void loop()
 {
-   //led1 & led2 are not looped since TPin::loop() does nothing
-   //led1.loop();
-   //led2.loop();
+   //LED's are not looped since TPin::loop() does nothing
+   //for (byte i = 0; i < NUM_LEDS; i++) leds[i].loop();
    
    //Loop the timer
    timer.loop();

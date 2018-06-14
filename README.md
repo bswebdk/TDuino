@@ -35,3 +35,8 @@ __V1.0 -> V1.1__
 * Added method attach(pin, mode) to TPin and all child classes.
 * Removed all usage of "setup()" which is no longer needed. If you have sketches which uses the setup() method, just delete any calls to setup().
 * TList has been removed, just declare array's instead.
+
+__V1.1 -> V1.2__
+* Removed constructor(pin, mode) from all pin classes (TPin, TPinInput, TPinOutput,
+  TButton) in order to preven hardware to be setup before it is ready. Use "attach"
+  during setup phase instead.

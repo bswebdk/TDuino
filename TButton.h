@@ -56,16 +56,6 @@ public:
   TButton();
   
   /**
-   * \brief Constructs an instance of TButton and attaches it to a pin.
-   * \param pin The pin on which the push button is attached.
-   * 
-   * Calls attach() with the defined pin.
-   * 
-   * \see attach()
-   */
-  TButton(byte pin);
-  
-  /**
    * \brief Attaches the instance of TButton to a pin.
    * \param pin See TPin::attach()
    * \param mode See TPin::attach()

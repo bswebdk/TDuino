@@ -53,12 +53,6 @@ TPinInput::TPinInput()
   defaults();
 }
 
-TPinInput::TPinInput(byte pin, byte mode)
-{
-  defaults();
-  attach(pin, mode);
-}
-  
 TPinInput::~TPinInput()
 {
   if (sampleBuffer) delete[] sampleBuffer;

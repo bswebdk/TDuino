@@ -40,12 +40,6 @@ TButton::TButton()
   defaults();
 }
 
-TButton::TButton(byte pin)
-{
-  defaults();
-  attach(pin, INPUT_PULLUP);
-}
-
 void TButton::attach(byte pin, byte mode)
 {
   TPinInput::attach(pin, INPUT_PULLUP);
