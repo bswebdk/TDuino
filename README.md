@@ -31,7 +31,7 @@ adding "#include <TDuino.h>" to the include section (first lines) of your sketch
 
 ## Change Log
 __V1.3 -> V1.4__
-* Fixed bad URL in library.properties (thankt to forker "per1234").
+* Fixed bad URL in library.properties (thankt to "per1234").
 * Added include info to library.properties.
 * Added new template class TTimelineT which is an optimized time line with no floating point math.
 * Added stopAll(), restartAll() to TTimer, TTimeline and TTimelineT.
