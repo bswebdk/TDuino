@@ -221,6 +221,11 @@ void TDuino_Warning(byte number);
  * free memory when constructing lists, timers, timelines etc.
  * 
  * The method has been copied from here: https://playground.arduino.cc/Code/AvailableMemory
+ * and since improved with guards which will prevent a linkage error due to unfound external
+ * values.
+ * 
+ * For now the function should be compatible with: Uno, Nano, Micro, Leonardo, Mega and
+ * NodeMCU (ESP8266).
  */
 int freeRam ();
 

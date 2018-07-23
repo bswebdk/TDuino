@@ -21,12 +21,8 @@
 
 #include "TTimeline.h"
 
-#define STATE_INACTIVE 0
-#define STATE_ACTIVE 1
-#define STATE_POSTPONED 2
-
 #define MAP_PCT(pct, low, high) roundf((float)(high - low) * pct) + low
-#define RESTART(t) t->start = loopMillis; t->state = (t->after == 0) ? STATE_ACTIVE : STATE_POSTPONED
+#define RESTART(t) t->start = loopMillis; t->state = (t->after == 0) ? TL_STATE_ACTIVE : TL_STATE_POSTPONED
 
 int TL_MapToInt(float progress, int low, int high) { return MAP_PCT(progress, low, high); }
 unsigned int TL_MapToUInt(float progress, unsigned int low, unsigned int high) { return MAP_PCT(progress, low, high); }
@@ -42,6 +38,15 @@ bool TTimeline::badIndex(byte i, const char *token)
     return true;
   }
   return false;
+}
+
+void TTimeline::checkMemError(const char *token)
+{
+  if (memError > 0)
+  {
+     TDuino_Error(TDUINO_ERROR_NOT_ENOUGH_MEMORY, memError, token);
+     memError = 0;
+  }
 }
 #endif
   
@@ -97,7 +102,7 @@ bool TTimeline::isActive(byte index)
 #ifdef TDUINO_DEBUG
   if (badIndex(index, PSTR("isActive"))) return false;
 #endif
-  return (slots[index].state == STATE_ACTIVE) || (slots[index].state == STATE_POSTPONED);
+  return (slots[index].state == TL_STATE_ACTIVE) || (slots[index].state == TL_STATE_POSTPONED);
 }
 
 bool TTimeline::isStarted(byte index)
@@ -105,7 +110,7 @@ bool TTimeline::isStarted(byte index)
 #ifdef TDUINO_DEBUG
   if (badIndex(index, PSTR("isStarted"))) return false;
 #endif
-  return slots[index].state == STATE_ACTIVE;
+  return slots[index].state == TL_STATE_ACTIVE;
 }
 
 void TTimeline::restart(byte index)
@@ -118,6 +123,11 @@ void TTimeline::restart(byte index)
   current = &slots[index];
 #endif
   RESTART(current);
+}
+
+void TTimeline::restartAll()
+{
+  for (dummy = 0; dummy < numSlots; dummy++) restart(dummy);
 }
 
 void TTimeline::set(byte index, unsigned long duration, unsigned long startAfter)
@@ -136,37 +146,38 @@ void TTimeline::stop(byte index)
 #ifdef TDUINO_DEBUG
   if (badIndex(index, PSTR("stop"))) return;
 #endif
-  slots[index].state = STATE_INACTIVE;
+  slots[index].state = TL_STATE_INACTIVE;
+}
+
+void TTimeline::stopAll()
+{
+  for (dummy = 0; dummy < numSlots; dummy++) stop(dummy);
 }
 
 void TTimeline::loop()
 {
 #ifdef TDUINO_DEBUG
-  if (memError > 0)
-  {
-     TDuino_Error(TDUINO_ERROR_NOT_ENOUGH_MEMORY, memError, PSTR("TTimeline"));
-     memError = 0;
-  }
+  checkMemError(PSTR("TTimeline"));
 #endif //TDUINO_DEBUG
 
   TBase::loop();
   for (byte i = 0; i < numSlots; i++)
   {
     current = &this->slots[i];
-    if (current->state == STATE_ACTIVE)
+    if (current->state == TL_STATE_ACTIVE)
     {
       float p = (current->duration == 0) ? 1.0f : (float)(loopMillis - current->start) / (float)current->duration;
-      if (p > 1.0f)
+      if (p >= 1.0f)
       {
         p = 1.0f;
-        current->state = STATE_INACTIVE;
+        current->state = TL_STATE_INACTIVE;
       }
       (*callback)(i, p);
     }
-    else if ((current->state == STATE_POSTPONED) && (loopMillis - current->start >= current->after))
+    else if ((current->state == TL_STATE_POSTPONED) && (loopMillis - current->start >= current->after))
     {
       current->start = loopMillis;
-      current->state = STATE_ACTIVE;
+      current->state = TL_STATE_ACTIVE;
       if (current->duration > 0) (*callback)(i, 0.0f); //Make sure that transition starts from 0.0f
     } 
   }

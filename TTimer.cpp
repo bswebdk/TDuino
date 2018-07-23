@@ -21,7 +21,7 @@
 
 #include "TTimer.h"
 
-#define RESTART(t) t->count=0; t->active=true;
+#define RESTART(t) t->lastMillis = loopMillis; t->count=0; t->active=true;
 
 /*----------------------------------------------------------------------*/
 /*----------------------------------------------------------------------*/
@@ -118,13 +118,26 @@ void TTimer::restart(byte index)
   RESTART(current);
 }
 
+void TTimer::restartAll()
+{
+  for (dummy = 0; dummy < numTimers; dummy++) restart(dummy);
+}
+
 void TTimer::resume(byte index)
 {
 #ifdef TDUINO_DEBUG
   if (badIndex(index, PSTR("resume"))) return;
   if (this->timers[index].active) TDuino_Warning(TDUINO_WARNING_RESUME_ACTIVE, index, PSTR("resume"));
 #endif
+  //current = &this->timers[index];
+  //current->lastMillis = loopMillis;
+  //current->active = true;
   this->timers[index].active = true;
+}
+
+void TTimer::resumeAll()
+{
+  for (dummy = 0; dummy < numTimers; dummy++) resume(dummy);
 }
 
 void TTimer::set(byte index, unsigned long interval, unsigned int repetitions)
@@ -135,7 +148,6 @@ void TTimer::set(byte index, unsigned long interval, unsigned int repetitions)
   current = &timers[index];
   current->interval = interval;
   current->repeat = repetitions;
-  current->lastMillis = loopMillis;
   RESTART(current);
 }
 void TTimer::set(unsigned long interval, unsigned int repetitions) { set(0, interval, repetitions); }
@@ -146,6 +158,11 @@ void TTimer::stop(byte index)
   if (badIndex(index, PSTR("stop"))) return;
 #endif
   this->timers[index].active = false;
+}
+
+void TTimer::stopAll()
+{
+  for (dummy = 0; dummy < numTimers; dummy++) stop(dummy);
 }
 
 void TTimer::loop()

@@ -24,6 +24,10 @@
 
 #include "TBase.h"
 
+#define TL_STATE_INACTIVE 0
+#define TL_STATE_ACTIVE 1
+#define TL_STATE_POSTPONED 2
+
 /**
  * \file TTimeline.h
  * \defgroup TL_HELPERS Timeline helpers
@@ -120,10 +124,20 @@ struct TTIMELINE_SLOT
  * \endcode
  * 
  * See \ref TL_HELPERS for a list of helpers for handling the progres value.
+ * 
+ * <b>IMPORTANT NOTE!</b> For most situations you would use the template class
+ * \ref TTimelineT because it is more efficient (no floating points). You should
+ * only use TTimeline in situations where you need to translate the progress to
+ * multiple different values.
+ * 
+ * \see TTimelineT
  */
 class TTimeline : public TBase
 {
 private:
+  void (*callback)(byte, float);
+  
+protected:
 #if TDUINO_TIMELINE_SIZE > 0
   const byte numSlots = TDUINO_TIMELINE_SIZE;
   TTIMELINE_SLOT slots[TDUINO_TIMELINE_SIZE];
@@ -132,12 +146,12 @@ private:
   TTIMELINE_SLOT *slots;
 #endif
   
-  void (*callback)(byte, float);
   TTIMELINE_SLOT *current;
   byte dummy;
 
 #ifdef TDUINO_DEBUG
   bool badIndex(byte i, const char *token);
+  void checkMemError(const char *token);
   byte memError;
 #endif
   
@@ -219,6 +233,13 @@ public:
   void restart(byte index);
   
   /**
+   * \brief Used to restart all slots.
+   * 
+   * This method will restart all slots in the time line.
+   */
+  void restartAll();
+  
+  /**
    * \brief Set a slot in the time line.
    * \param index Index of the slot to set.
    * \param duration The duration of the slot.
@@ -241,7 +262,14 @@ public:
   void stop(byte index);
   
   /**
-   * \brief The time line's loop phase.
+   * \brief Stop all slots.
+   * 
+   * This will deactivate all slots in the time line.
+   */
+  void stopAll();
+  
+  /**
+   * \brief The TTimeline's loop phase.
    * 
    * Must be called for each loop in the sketch.
    * 

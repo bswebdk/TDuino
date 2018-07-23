@@ -175,27 +175,45 @@ public:
   bool isActive(byte index = 0);
   
   /**
-	* \brief Restarts a timer slot.
-	* \param index The index of the timer slot to restart.
-	* 
-	* Used to restart a timer slot with the values previosly defined with
-	* set().
-	* 
-	* \see set() stop()
-	*/
+   * \brief Restarts a timer slot.
+   * \param index The index of the timer slot to restart.
+   * 
+   * Used to restart a timer slot with the values previosly defined with
+   * set().
+   * 
+   * \see set() stop()
+   */
   void restart(byte index = 0);
   
   /**
-	* \brief Resumes a timer slot.
-	* \param index The index of the timer slot to resume.
-	* 
-	* Used to resume a timer slot. Unlike #restart(), resume() does not reset
-	* the values in the timer slot but resumes from the point where the slot
-	* was stopped.
-	* 
-	* \see restart() stop()
-	*/
+   * \brief Restarts all timer slot.
+   * 
+   * Used to restart all timer slots.
+   * 
+   * \see retart()
+   */
+  void restartAll();
+  
+  /**
+   * \brief Resumes a timer slot.
+   * \param index The index of the timer slot to resume.
+   * 
+   * Used to resume a timer slot. Unlike #restart(), resume() does not reset
+   * the values in the timer slot but resumes from the point where the slot
+   * was stopped.
+   * 
+   * \see restart() stop()
+   */
   void resume(byte index = 0);
+  
+  /**
+   * \brief Resumes all timer slots.
+   * 
+   * Used to resume all timer slots.
+   * 
+   * \see resume()
+   */
+  void resumeAll();
   
   /**
 	* \fn set(byte index, unsigned long interval, unsigned int repetitions)
@@ -219,16 +237,25 @@ public:
   void set(unsigned long interval, unsigned int repetitions);
   
   /**
-	* \brief Stop a timer slot.
-	* \param index The index of the slot to stop.
-	* 
-	* If you want to stop a timer slot you must call this method with the
-	* index of the slot to stop. If index is not defined, the first slot is
-	* stopped.
-	* 
-	* \see resume() restart()
-	*/
+   * \brief Stop a timer slot.
+   * \param index The index of the slot to stop.
+   * 
+   * If you want to stop a timer slot you must call this method with the
+   * index of the slot to stop. If index is not defined, the first slot is
+   * stopped.
+   * 
+   * \see resume() restart()
+   */
   void stop(byte index = 0);
+
+  /**
+   * \brief Stop all timer slot.
+   * 
+   * Used to stop all timer slots.
+   * 
+   * \see stop()
+   */
+  void stopAll();
 
   /**
 	* \brief The timer's loop phase.

@@ -30,13 +30,27 @@ adding "#include <TDuino.h>" to the include section (first lines) of your sketch
 * Increased memory usage
 
 ## Change Log
+__V1.3 -> V1.4__
+* Fixed bad URL in library.properties (thankt to forker "per1234").
+* Added include info to library.properties.
+* Added new template class TTimelineT which is an optimized time line with no floating point math.
+* Added stopAll(), restartAll() to TTimer, TTimeline and TTimelineT.
+* Added resumeAll() to TTimer.
+* Fixed an insignificant "bug" in TTimeline which would cause most slots to be invoked twice with "1.0".
+* Fixed bug with initial timing for restarted slots in TTimer.
+
+__V1.2 -> V1.3__
+* Function TDefs::freeRam() may have caused problems on some none-arduino branded boards due to missing external values used to calculate
+  available memory. Even though some problems are solved for now, freeRam() still lacks compatibility with some boards / processors.
+
+__V1.1 -> V1.2__
+* Removed constructor(pin, mode) from all pin classes (TPin, TPinInput, TPinOutput,
+  TButton) in order to preven hardware to be setup before it is ready. Use "attach"
+  during setup phase instead.
+
 __V1.0 -> V1.1__
 * Added a default contructor to TPin, TPinInput, TPinOutput, TButton in order to allow array instantiation of the classes (eg. TPin pins[3]).
 * Added method attach(pin, mode) to TPin and all child classes.
 * Removed all usage of "setup()" which is no longer needed. If you have sketches which uses the setup() method, just delete any calls to setup().
 * TList has been removed, just declare array's instead.
 
-__V1.1 -> V1.2__
-* Removed constructor(pin, mode) from all pin classes (TPin, TPinInput, TPinOutput,
-  TButton) in order to preven hardware to be setup before it is ready. Use "attach"
-  during setup phase instead.

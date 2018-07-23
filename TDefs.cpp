@@ -56,9 +56,16 @@ void TDuino_Warning(byte number, const char *token) { DebugPrint(false, number, 
 void TDuino_Warning(byte number) { DebugPrint(false, number, NULL, NULL); }
 
 int freeRam () {
+#if defined(__AVR_ATmega328P__) || defined(_AVR_ATmega328__) || defined(_AVR_ATmega168__) || defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
   extern int __heap_start, *__brkval;
   int v;
   return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
+#elif defined(ARDUINO_ESP8266_NODEMCU)
+  return node.heap();
+#else
+  #warning "Could not detect proper board type in TDefs::freeRam()"
+  return 1000; //Assumed maximum available memory
+#endif
 }
 
 //#endif //TDUINO_DEBUG

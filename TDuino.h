@@ -25,4 +25,6 @@
 #include "TPinOutput.h"
 #include "TTimer.h"
 #include "TTimeline.h"
+#include "TTimelineT.h"
+#include "TTimelineT.cpp" //Required to avoid linkage errors
 
