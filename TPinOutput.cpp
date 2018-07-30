@@ -14,7 +14,7 @@ TPinOutput::TPinOutput()
    defaults();
 }
 
-void TPinOutput::attach(byte pin, byte mode)
+void TPinOutput::attach(byte pin, byte mode UNUSED_ATTR)
 {
   TPin::attach(pin, OUTPUT);
 }

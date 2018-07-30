@@ -72,6 +72,15 @@ public:
    */
   TTimelineT(void(*callback)(byte, DATATYPE), byte numSlots = 1);
   
+  using TTimeline::firstActive;
+  using TTimeline::firstInactive;
+  using TTimeline::getSize;
+  using TTimeline::hasOverlap;
+  using TTimeline::isActive;
+  using TTimeline::isStarted;
+  using TTimeline::restart;
+  using TTimeline::restartAll;
+  
   /**
    * \brief Set the minimum and maximum values for progress.
    * \param minValue The minimum progress value.
@@ -87,6 +96,10 @@ public:
    */
   void setMinMax(DATATYPE minValue, DATATYPE maxValue);
   
+  using TTimeline::set;
+  using TTimeline::stop;
+  using TTimeline::stopAll;
+  
   /**
    * \brief The TTimelineT's loop phase.
    * 
@@ -95,17 +108,6 @@ public:
    * \see TTimeline::loop()
    */
   virtual void loop();
-  
-  using TTimeline::firstActive;
-  using TTimeline::firstInactive;
-  using TTimeline::getSize;
-  using TTimeline::isActive;
-  using TTimeline::isStarted;
-  using TTimeline::restart;
-  using TTimeline::restartAll;
-  using TTimeline::set;
-  using TTimeline::stop;
-  using TTimeline::stopAll;
   
 };
 

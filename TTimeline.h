@@ -204,6 +204,47 @@ public:
 	* \see TTimeline()
 	*/
   byte getSize();
+  
+  /**
+   * \brief Check if two slots has an overlap.
+   * \param index1 The index of the first slot to check.
+   * \param index2 The index of the second slot to check.
+   * \param remove If true, the overlapping slot will be postponet until the overlap is removed.
+   * 
+   * \return 0 if there is no overlap, 1 if index1 overlaps index2 and 2 if index2
+   * overlaps index1. If the return value is negative, the operation could not be
+   * performed due to a 32 bit rollover in the slot. Eg. if the return value is -2 
+   * the slot at index2 causes a rollover.
+   * 
+   * This method is used to examine wheter or not the actual transition of two
+   * slots are overlapping in a way that they may interfere with eachother. The
+   * overlapping slot is the slot that starts later and if both slots starts at
+   * the same time, the first slot will be returned.
+   * 
+   * \code
+   * TTimeline tl(tlHandler, 2);
+   * tl.set(0, 1000, 500);
+   * tl.set(1, 1000, 1000);
+   * byte ol = tl.hasOverlap(0, 1, true);
+   * \endcode
+   * 
+   * In the example above, "ol" will be 2 because the second slot will start when
+   * the first slot is half done. Since "remove" is set to true, the second slot
+   * will be postponet with an additional 500 ms and this means that the code above
+   * will do exactely the same as the next example:
+   * 
+   * \code
+   * TTimeline tl(tlHandler, 2);
+   * tl.set(0, 1000, 500);
+   * tl.set(1, 1000, 1500);
+   * \endcode
+   * 
+   * <b>NOTE:</b> By default hasOverlap() uses 32 bit integers for calculation and
+   * this will only work if the time line does not exceed ~24 days (or ~35 seconds
+   * if using micros() for timing) from start to end. This behaviour may be tweaked,
+   * read more about it in \ref tduino_tweaks.
+   */
+  char hasOverlap(byte index1, byte index2, bool remove = false);
 
   /**
    * \brief Check if a slot is active.

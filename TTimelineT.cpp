@@ -2,7 +2,7 @@
   
   Copyright © 2018 - Torben Bruchhaus
   TDuino.bruchhaus.dk - github.com/bswebdk/TDuino
-  File: TTimeline.cpp   
+  File: TTimelineT.cpp   
   
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Lesser General Public License as published
@@ -49,12 +49,13 @@ void TTimelineT<DATATYPE>::loop()
     current = &this->slots[i];
     if (current->state == TL_STATE_ACTIVE)
     {
-      DATATYPE p = (current->duration == 0) ? mapMax : map(loopMillis - current->start, 0, current->duration, mapMin, mapMax);
-      if (p >= mapMax)
+      DATATYPE p;
+      if (loopMillis - current->start >= current->duration)
       {
         p = mapMax;
         current->state = TL_STATE_INACTIVE;
       }
+      else p = map(loopMillis - current->start, 0, current->duration - 1, mapMin, mapMax);
       (*callback)(i, p);
     }
     else if ((current->state == TL_STATE_POSTPONED) && (loopMillis - current->start >= current->after))

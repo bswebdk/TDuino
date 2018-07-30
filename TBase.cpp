@@ -23,9 +23,11 @@
 
 void TBase::defaults()
 {
-  this->loopMillis = 0;
 #ifdef TDUINO_DEBUG
+  this->loopMillis = TDUINO_SIMULATED_UPTIME;
   this->attachedTo = NULL;
+#else
+  this->loopMillis = 0;
 #endif
 }
 
@@ -42,5 +44,12 @@ TBase::~TBase()
 }
 
 void TBase::loop() {
+#ifdef TIMING_WITH_MICROS
+  loopMillis = micros();
+#else 
   loopMillis = millis();
+#endif
+#ifdef TDUINO_DEBUG
+  loopMillis += TDUINO_SIMULATED_UPTIME;
+#endif
 }

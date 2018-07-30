@@ -24,7 +24,11 @@
 void TButton::defaults()
 {
   TPinInput::defaults();
+#ifdef TIMING_WITH_MICROS
+  debounce = 20000;
+#else
   debounce = 20;
+#endif
   delay1 = 0;
   delay2 = 0;
 }
@@ -40,7 +44,7 @@ TButton::TButton()
   defaults();
 }
 
-void TButton::attach(byte pin, byte mode)
+void TButton::attach(byte pin, byte mode UNUSED_ATTR)
 {
   TPinInput::attach(pin, INPUT_PULLUP);
   analog = false;

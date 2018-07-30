@@ -25,14 +25,26 @@
 //Uncomment the following line to enable debug mode
 //#define TDUINO_DEBUG
 
-//Uncomment the following line to use 10 statically allocated items per instance of TList
-//#define TDUINO_LIST_SIZE 10
-
 //Uncomment the following line to use 10 statically allocated timer slots per instance of TTimer
 //#define TDUINO_TIMER_SIZE 10
 
 //Uncomment the following line to use 10 statically allocated timeline slots per instance of TTimeline
 //#define TDUINO_TIMELINE_SIZE 10
+
+//Uncomment the following line to enable the use of 64 bit integers
+//#define ENABLE_64BIT
+
+//Uncomment the following line to disable 32 bit rollover checks
+//#define DISABLE_32BIT_ROLLOVER_CHECKS
+
+//If you want TDuino to use micros() rather than millis() for timing, you can uncomment the next line
+//#define TIMING_WITH_MICROS
+
+#ifdef __GNUG__
+#define UNUSED_ATTR __attribute__((unused))
+#else
+#define UNUSED_ATTR
+#endif
 
 #if (ARDUINO >= 100)
 #include <Arduino.h>
@@ -42,21 +54,24 @@
 
 #ifdef TDUINO_DEBUG
 
+//If you want to simulate long runs, you can define how many millis should be added to millis()
+//in TDuino below. This will only work if debugging is enabled.
+#define TDUINO_SIMULATED_UPTIME 0xFFFF0000UL
+
 /**
  * \file TDefs.h
  * 
  * \defgroup static_allocation Static allocation of object memory
  * 
- * By default TList, TTimer and TTimeline uses dynamic memory allocation for the
- * items / slots they hold. In some cases this may not be an ideal sollution and
- * therefore it is possible to allocate the memory used by the objects in a
+ * By default TTimer, TTimeline and TTimelineT uses dynamic memory allocation
+ * for the items / slots they hold. In some cases this may not be an ideal sollution
+ * and therefore it is possible to allocate the memory used by the objects in a
  * static way.
  * 
  * You need to modify __TDefs.h__ in the library folder and you must focus on the
  * lines:
  * 
  * \code
- * //#define TDUINO_LIST_SIZE 10
  * //#define TDUINO_TIMER_SIZE 10
  * //#define TDUINO_TIMELINE_SIZE 10
  * \endcode
@@ -72,15 +87,68 @@
  * 
  * \code
  * //TDefs.h
- * #define TDUINO_LIST_SIZE 5
+ * #define TDUINO_TIMER_SIZE 5
  * 
  * //Sketch.ino
- * TList list1(10);
- * TList list2(8);
+ * TTimer timer1(timerCallback, 10);
+ * TTimer timer2(timerCallback, 8);
  * \endcode
  * 
- * The code above will create two instances of TList, both able to hold 5 items - even
+ * The code above will create two instances of TTimer, both able to hold 5 timers - even
  * if another value is passed to the constructor!
+ * 
+ * @{ @}
+ * 
+ * \defgroup tduino_tweaks Tweaking TDuino
+ * 
+ * By uncommenting or modifying some of the defines in TDefs.h in the library folder,
+ * you can change the behaviour of TDuino. The following defines can be used for tweaks:
+ * 
+ * <div>&nbsp;</div>
+ * \code
+ * //#define ENABLE_64BIT
+ * \endcode
+ * 
+ * Uncommenting the line above will enable the use of 64 bit integers. These large numbers
+ * are only used to prevent limitations caused by 32 bit rollover in timing related
+ * calculations used in the following method(s): TTimeline::hasOverlap(). Please note that
+ * 64 bit integers are slower to handle than 32 bit integers. Also, 64 bit integers uses more
+ * memory and  the size of the compiled sketch will increase because the compiler needs to
+ * add code to handle 64 bit integers.
+ * 
+ * <div>&nbsp;</div>
+ * \code
+ * //#define DISABLE_32BIT_ROLLOVER_CHECKS
+ * \endcode
+ * 
+ * Uncommenting the line above will remove code used to avoid unwanted 32 bit rollover
+ * in timing calculations for the following methods: TTimeline::hasOverlap(). By default
+ * 32 bit rollover will be checked in order to avoid unstable behaviour which may otherwise
+ * occur if 32 bit addition rolls over. If a TTimeline or TTimelineT has multiple slots which
+ * combined will take longer time than can be stored in 31 bits (~24 days using millis() or
+ * 35 seconds using micros()) you may run into issues with 32 bit rollover.
+ * 
+ * The define is ignored if 64 bit integers are enabled.
+ * 
+ * <div>&nbsp;</div>
+ * \code
+ * //#define TIMING_WITH_MICROS
+ * \endcode
+ * 
+ * By default TDuino uses millis() for all timing related functions. If you rather want
+ * to use micros() for timing, you can do this by uncommenting this define. Please note
+ * that all arguments given in milliseconds throughout TDuino must be given as microseconds
+ * instead. If timing with micros() is enabled, the following TTimer will trigger each
+ * 100 milliseconds:
+ * 
+ * \code
+ * TTimer timer(timerCallback);
+ * timer.set(100000);
+ * \endcode
+ * 
+ * The same behaviour will be the case for: TPinOutput, TTimeline and TTimelineT. It will
+ * also change the behaviour of debouncing used by TPinInput and TButton, so be careful
+ * when using micros() for timing.
  * 
  * @{ @}
  * 
@@ -169,9 +237,17 @@ const PROGMEM byte TDUINO_ERROR_NOT_ENOUGH_MEMORY = 7;
 /**
  * \brief Error used when trying to use an uninitialized instance of TPin
  * or any derived classes (TPinInput, TPinOutput, TButton). Usually caused
- * when the default constructor was used and TPin::attach() was not called
+ * when the default constructor was used and TPin::attach() was not called.
  */
 const PROGMEM byte TDUINO_ERROR_INVALID_PIN = 8;
+
+/**
+ * \brief Error used when an unintended rollover/overflow of data types
+ * happens. This is usually related to timing features, especially the
+ * TTimeline::hasOverlap() method, but it may be triggered elsewhere as
+ * well.
+ */
+const PROGMEM byte TDUINO_ERROR_ROLLOVER = 9;
 
 /**
  * \brief Warning used when reading an output pin or writing an input pin.

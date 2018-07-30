@@ -22,7 +22,7 @@
 #include "TPinInput.h"
 
 //Used as a dummy to prevent one or two "if (callback)" statement(s) for each loop.
-void dummy_callback(byte b, int i) {}
+void dummy_callback(byte b UNUSED_ATTR, int i UNUSED_ATTR) {}
 
 void TPinInput::defaults()
 {

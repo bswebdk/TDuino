@@ -30,6 +30,13 @@ adding "#include <TDuino.h>" to the include section (first lines) of your sketch
 * Increased memory usage
 
 ## Change Log
+__V1.4 -> V1.5__
+* Fixed missing "TL_" in TTimeline::restart() (debug mode only).
+* Added method TTimeline::hasOverlap().
+* Fixed "beyond end of duration" bug in TTimelineT::loop().
+* Added possibility to use of micros() instead of millis() for timing.
+* Updated documentation.
+
 __V1.3 -> V1.4__
 * Fixed bad URL in library.properties (thankt to "per1234").
 * Added include info to library.properties.
