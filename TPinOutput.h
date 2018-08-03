@@ -33,10 +33,10 @@ class TPinOutput : public TPin {
   
 private:
 
-  int stateCur;
-  byte task, stateInit, stateLow, stateHigh;
+  int stateCur, stateInit, stateLow, stateHigh;
+  byte task;
   unsigned long lastMillis;
-  unsigned int msLow, msHigh, repeats, count;
+  unsigned int msLow, msHigh, repeats, count, use_ms;
 
   void counter();
 
@@ -65,10 +65,10 @@ public:
    * 
    * \see TPin()::attach()
    */
-  virtual void attach(byte pin, byte mode = INPUT);
+  virtual void attach(byte pin, byte mode = OUTPUT);
   
   /**
-	* \fn oscillate(unsigned int intervalRising, unsigned int intervalFalling, unsigned int repetitions, byte initialState, byte stateLowest, byte stateHighest)
+	* \fn oscillate(unsigned int intervalRising, unsigned int intervalFalling, unsigned int repetitions, int initialState, int stateLowest, int stateHighest)
 	* 
 	* \brief Oscillates a pin using PWM.
 	* 
@@ -92,22 +92,22 @@ public:
 	* __NOTE:__ If _initialState_ is not equal to _stateLowest_ or _stateHighest_, it
 	* will be mapped to whichever of the two values is the nearest.
 	*/
-  void oscillate(unsigned int intervalRising, unsigned int intervalFalling, unsigned int repetitions, byte initialState, byte stateLowest, byte stateHighest);
+  void oscillate(unsigned int intervalRising, unsigned int intervalFalling, unsigned int repetitions, int initialState, int stateLowest, int stateHighest);
   
   /**
-	* \overload oscillate(unsigned int intervalRising, unsigned int intervalFalling, unsigned int repetitions, byte initialState)
+	* \overload oscillate(unsigned int intervalRising, unsigned int intervalFalling, unsigned int repetitions, int initialState)
 	* \see oscillate()
 	*/
-  void oscillate(unsigned int intervalRising, unsigned int intervalFalling, unsigned int repetitions, byte initialState);
+  void oscillate(unsigned int intervalRising, unsigned int intervalFalling, unsigned int repetitions, int initialState);
 
   /**
-	* \overload oscillate(unsigned int interval, unsigned int repetitions, byte initialState)
+	* \overload oscillate(unsigned int interval, unsigned int repetitions, int initialState)
    * 
    * _interval_ will be used for both _intervalRising_ and _intervalFalling_.
    * 
 	* \see oscillate()
 	*/
-  void oscillate(unsigned int interval, unsigned int repetitions, byte initialState);
+  void oscillate(unsigned int interval, unsigned int repetitions, int initialState);
 
   /**
 	* \overload oscillate(unsigned int interval, unsigned int repetitions)
@@ -128,7 +128,7 @@ public:
   void oscillate(unsigned int interval);
   
   /**
-	* \fn pulse(unsigned int intervalLow, unsigned int intervalHigh, unsigned int repetitions, byte initialState)
+	* \fn pulse(unsigned int intervalLow, unsigned int intervalHigh, unsigned int repetitions, int initialState)
 	* 
 	* \brief Pulses a pin between by switching it between LOW and HIGH.
 	* 
@@ -140,21 +140,22 @@ public:
 	* This will start a pulse on the pin which will be LOW for _intervalLow_ milliseconds
    * and then HIGH for _intervalHigh_ milliseconds and so on. the pulse will start as
    * _initialState_ and it will continue until _repetition_ pulses have been performed.
-   * If _repetitions_ is zero the pulse will go on forever.
+   * If _repetitions_ is zero the pulse will go on forever. _initialState_ will be clamped
+	* to a modulus by 2 of the specified value.
    * 
    * The overloaded versions of this method will use the default values described above to
    * define the omitted parameters.
 	*/
-  void pulse(unsigned int intervalLow, unsigned int intervalHigh, unsigned int repetitions, byte initialState);
+  void pulse(unsigned int intervalLow, unsigned int intervalHigh, unsigned int repetitions, int initialState);
   
   /**
-	* \overload pulse(unsigned int interval, unsigned int repetitions, byte initialState)
+	* \overload pulse(unsigned int interval, unsigned int repetitions, int initialState)
 	* 
 	* _interval_ will be used as both _intervalLow_ and _intervalHigh_
 	* 
 	* \see pulse()
 	*/
-  void pulse(unsigned int interval, unsigned int repetitions, byte initialState);
+  void pulse(unsigned int interval, unsigned int repetitions, int initialState);
   
   /**
 	* \overload pulse(unsigned int interval, unsigned int repetitions)

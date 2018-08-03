@@ -39,13 +39,14 @@ class TPinInput : public TPin {
 private:
 
   byte sampleIdx;
-  int dummy;
   unsigned int sampleVal;
+  int dummy;
   
 protected:
 
   TPinInputCallback callbacks[2]; ///< Callbacks for onFalling and onRising
   byte deviation; ///< The amount of deviation required to trigger an event
+  bool fixedDeviation; ///< If deviation is to be handled as fixed steps
   byte samples; ///< The number of samples to use for events
   int* sampleBuffer; ///< Buffer used for storing multiple samples
   int lastState; ///< The last known state of the pin. See loop().
@@ -60,9 +61,9 @@ protected:
 	* \brief Method called when the pins state is falling.
 	* 
 	* This method is called whenever the pin state is detected as being lower than
-   * the last time (minding debounce and deviation). You can override this method
-   * in order to change the functionality a falling pin state. By default this
-   * method calls the event handler stored in #callbacks [0].
+  * the last time (minding debounce and deviation). You can override this method
+  * in order to change the functionality a falling pin state. By default this
+  * method calls the event handler stored in #callbacks [0].
 	*/
   virtual void falling();
   
@@ -70,7 +71,7 @@ protected:
 	* \brief Method called when the pins state is rising.
 	* 
 	* This has inverted functionality of falling() and by default it does nothing
-   * but calling callbacks [1].
+  * but calling callbacks [1].
 	*/
   virtual void rising();
   
@@ -152,20 +153,28 @@ public:
 
   /**
   * \brief Set the amount of deviation used to detect state change.
+  * \param deviation The amount of deviation to use.
+  * \param fixedSteps Set to true if you want events to use fixed steps.
   * 
-  * By default any change in pin state will fire an event (deviation = 0), but since 
-  * readings from analog pins may fluctuate a bit you may be flooded with useless events.
-  * By setting deviation, events will only be triggered when the pin state differs by the
-  * amount of deviation specified.
+  * By default deviation is set to 1 and this means than any change in pin state will
+  * cause an event to fire. Because readings from analog pins may fluctuate, a 
+  * tolerance of 1 may have the result that you are flooded with events. By changing
+  * the value of deviation, events will only be triggered when the pin state differs by 
+  * at least the amount of deviation specified.
   * 
-  * __Known "issue":__ When deviation is used, some values will never be registered for
-  * the pin. If deviation is set to 5 and the initial state of the pin is read as 4,
-  * you will never get a value of 0 from the pin which may be an issue for some
-  * applications.
+  * If "fixedSteps" is enabled, events will fire with fixed increments / decrements, so 
+  * if "deviation" is 5 and the pin state rises from 10 to 20 then an event will be 
+  * fired for 15 and 20. If "fixedSteps" is disabled, you would only get an event
+  * for 20.
+  * 
+  * __NOTES:__ 1) Setting deviation to 0 will cause onRising events to fire even if 
+  * there are no changes in pin state. 2) Setting deviation to values above 1 for digital 
+  * pins will be truncated to 0 (even values) or 1. 3) When deviation is above 1 and 
+  * "fixedSteps" is true, some values from the pin may never cause an event to fire.
   * 
   * \see onRising() onFalling()
   */
-  void setDeviation(byte deviation);
+  void setDeviation(byte deviation, bool fixedSteps = false);
   
   /**
    * \brief Get buffered value of the sample buffer.
@@ -233,11 +242,11 @@ public:
 	* \param callback The callback to be used.
 	* 
 	* Assigns the argument given as being the callback used whenever the pin's state
-   * is registred as falling (lower than last poll). You can clear a previously set
-   * callback by using NULL as argument.
+  * is registred as falling (lower than last poll). You can clear a previously set
+  * callback by using NULL as argument.
 	* 
 	* The arguments passed to the callback are the pin number and the new state which
-   * has been detected on the pin.
+  * has been detected on the pin.
 	* 
 	* \see onRising() setSamples() setDeviation() falling() rising().
 	* 
@@ -257,9 +266,10 @@ public:
 	* \brief Assign a callback for rising pin state.
 	* \param callback The callback to be used.
 	* 
-	* Is the same as onFalling() but for a rising pin state.
+	* Is the same as onFalling() but for a rising pin state. Note that if deviation
+  * is set to 0, rising event will fire even if there is no change in pin state. 
 	* 
-	* \see onFalling()
+	* \see onFalling() setDeviation()
 	*/
   void onRising(TPinInputCallback callback);//void (*callback)(byte, int));
 

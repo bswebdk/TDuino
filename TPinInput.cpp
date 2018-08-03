@@ -21,6 +21,14 @@
 
 #include "TPinInput.h"
 
+#ifdef TPININPUT_FLOAT_MATH
+  #define SAMPLEDIV(a, b) round((float)a / float(b))
+#else
+  #define SAMPLEDIV(a, b) a / b;
+#endif
+
+#define DEVIFIXED_BIT 128
+
 //Used as a dummy to prevent one or two "if (callback)" statement(s) for each loop.
 void dummy_callback(byte b UNUSED_ATTR, int i UNUSED_ATTR) {}
 
@@ -29,6 +37,7 @@ void TPinInput::defaults()
   TPin::defaults();
   this->sampleIdx = 0;
   this->sampleVal = 0;
+  this->deviation = 1;
   this->samples = 0;
   this->sampleBuffer = NULL;
   this->lastState = 0;
@@ -82,18 +91,24 @@ int TPinInput::read(byte samples)
 #else
   if (samples < 2) return -1;
 #endif //TDUINO_DEBUG
+
+#ifdef PININPUT_FLOAT
   float res = 0;
+#else
+  unsigned long res = 0;
+#endif
+
   if (debounce > 0)
   {
-    if (analog) for (dummy = 0; dummy < samples; dummy++) { delay(debounce); res += analogRead(pin); }
+    if (mode & ANALOG_BIT) for (dummy = 0; dummy < samples; dummy++) { delay(debounce); res += analogRead(pin); }
     else for (dummy = 0; dummy < samples; dummy++) { delay(debounce); res += digitalRead(pin); }
   }
   else
   {
-    if (analog) for (dummy = 0; dummy < samples; dummy++) res += analogRead(pin);
+    if (mode & ANALOG_BIT) for (dummy = 0; dummy < samples; dummy++) res += analogRead(pin);
     else for (dummy = 0; dummy < samples; dummy++) res += digitalRead(pin);
   }
-  return round(res / samples);
+  return SAMPLEDIV(res, samples); //round(res / samples);
 }
 
 unsigned int TPinInput::getDebounce()
@@ -108,12 +123,14 @@ void TPinInput::setDebounce(unsigned int debounce)
 
 byte TPinInput::getDeviation()
 {
-  return deviation;
+  return deviation & 127;
 }
 
-void TPinInput::setDeviation(byte deviation)
+void TPinInput::setDeviation(byte deviation, bool fixedSteps)
 {
+  if ((deviation > 1) and (!isAnalog())) deviation = 1; 
   this->deviation = deviation;
+  this->fixedDeviation = fixedSteps;
 }
 
 int TPinInput::getBufferedValue(byte sampleIndex)
@@ -125,7 +142,7 @@ int TPinInput::getBufferedValue(byte sampleIndex)
       return -1;
    } else if (sampleIndex && (sampleIndex > samples)) TDuino_Error(TDUINO_ERROR_BAD_PARAMETER, sampleIndex, PSTR("TPinInput::getBufferedValue"));
 #endif
-   return sampleIndex ? sampleBuffer[sampleIndex - 1] : round((float)sampleVal / samples);
+   return sampleIndex ? sampleBuffer[sampleIndex - 1] : SAMPLEDIV(sampleVal, samples);// round((float)sampleVal / samples);
 }
 
 byte TPinInput::getSamples()
@@ -166,51 +183,55 @@ void TPinInput::loop()
   
   TPin::loop();
   
+  #ifdef ENABLE_TIGHT_TIMING
+  #define CHMS() changeMillis += debounce
+  #else
+  #define CHMS() changeMillis = loopMillis
+  #endif
+
   if (loopMillis - changeMillis >= debounce) {
 
     if (sampleBuffer)
     {
-       changeMillis = loopMillis;
-       sampleVal -= sampleBuffer[sampleIdx];
-       sampleBuffer[sampleIdx] = read();
-       sampleVal += sampleBuffer[sampleIdx];
-       if (++sampleIdx == samples) sampleIdx = 0;
-       dummy = round((float)sampleVal / (float)samples); //getBufferedValue();
+      CHMS();
+      sampleVal -= sampleBuffer[sampleIdx];
+      sampleBuffer[sampleIdx] = read();
+      sampleVal += sampleBuffer[sampleIdx];
+      if (++sampleIdx == samples) sampleIdx = 0;
+      dummy = SAMPLEDIV(sampleVal, samples);
+      //dummy = round((float)sampleVal / (float)samples); //getBufferedValue();
     }
+    else if (samples == 0) dummy = read();
     else
     {
-       
-      if (samples == 0) dummy = read();
+      sampleVal += read();
+      if (++sampleIdx == samples)
+      {
+        dummy = SAMPLEDIV(sampleVal, samples);
+        //dummy = round((float)sampleVal / (float)samples);
+        sampleVal = 0;
+        sampleIdx = 0;
+      }
       else
       {
-        sampleVal += read();
-        if (++sampleIdx == samples)
-        {
-           dummy = round((float)sampleVal / samples);
-           sampleVal = 0;
-           sampleIdx = 0;
-        }
-        else
-        {
-          changeMillis = loopMillis;
-          return;
-        }
+        CHMS();
+        return;
       }
     }
     
-    if (dummy > (lastState + deviation))
+    if (dummy >= (lastState + deviation))
     {
-      lastState = dummy;
+      lastState = (fixedDeviation && (deviation > 0)) ? lastState + deviation : dummy;
       rising();
     }
-    else if (dummy < (lastState - deviation))
+    else if (dummy <= (lastState - deviation))
     {
-      lastState = dummy;
+      lastState = (fixedDeviation && (deviation > 0)) ? lastState - deviation : dummy;
       falling();
     }
     else return;
     
-    changeMillis = loopMillis;
+    CHMS();
     
   }
 

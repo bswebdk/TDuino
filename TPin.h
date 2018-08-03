@@ -23,6 +23,9 @@
 #define TPIN_H
 #include "TBase.h"
 
+#define ANALOG_BIT 128
+#define PWM_BIT 64
+
 /**
  * \brief Handles a I/O for a single pin.
  * 
@@ -30,16 +33,16 @@
  */
 class TPin : public TBase {
 
-#ifdef TDUINO_DEBUG
-private:
-  bool isPinValid(const char *token = NULL);
-#endif //TDUINO_DEBUG
-
 protected:
 
+#ifdef TDUINO_DEBUG
+//private:
+  bool isPinValid(const char *token = NULL);
+  bool isPwmValid(int &value, const char *token = NULL);
+#endif //TDUINO_DEBUG
+
   byte pin; ///< The pin assigned to this instance.
-  byte mode; ///< The mode used for the pin (INPUT / INPUT_PULLUP / OUTPUT).
-  bool analog; ///< True if the pin is detected as being an analog pin.
+  byte mode; ///< The mode used for the pin (INPUT / INPUT_PULLUP / OUTPUT). The two high order bits are used to store additional info about the pin.
 
 /// \cond HIDDEN_FIELD
   virtual void defaults();
@@ -118,17 +121,17 @@ public:
 	* 
 	* Sets the pin's PWM value to the value given. The PWM value is set using
    * analogWrite. To reduce overhead there is being performed no check of the
-   * pins PWM capabilities (unless compiled in debug mode). You should do this
-   * with hasPwm()
+   * pins PWM capabilities (unless compiled in debug mode). If you need to,
+	* you can do this with hasPwm().
 	* 
 	*/
-  void pwm(byte value);
+  void pwm(int value);
 
   /**
-   * \brief Read the state of the pin.
-   * \returns The state of the pin.
+   * \brief Read the value from the pin.
+   * \returns The value from the pin.
    * 
-   * This will return the state retreived with analogRead for analog pins and
+   * This will return the value retreived with analogRead for analog pins and
    * digitalRead for digital pins.
    * 
    * \see state()
@@ -144,7 +147,7 @@ public:
    * 
    * \see read()
    */
-  int state();
+  byte state();
 
   /**
 	* \brief Checks if the pin is analog.
@@ -173,7 +176,7 @@ public:
   * the mode set in the constructor or with setMode().
 	* \see TPin().
 	*/
-  int getMode();
+  byte getMode();
 
   /**
 	* \brief Get the pin's number.
@@ -183,7 +186,7 @@ public:
 	* The value return is equal to the pin number set in the constructor.
 	* \see TPin().
 	*/
-  int getPin();
+  byte getPin();
 
 };
 

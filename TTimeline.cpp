@@ -102,6 +102,9 @@ char TTimeline::hasOverlap(byte index1, byte index2, bool remove)
 #ifdef TDUINO_DEBUG
   const static char func_tag[] PROGMEM = "hasOverlap";
   if (badIndex(index1, func_tag) || badIndex(index2, func_tag)) return 0;
+  #define RO_ERROR(i, r) { TDuino_Error(TDUINO_ERROR_ROLLOVER, i, func_tag); return r; }
+#else
+  #define RO_ERROR(i, r) return r
 #endif
   
   current = &this->slots[index1];
@@ -125,7 +128,7 @@ char TTimeline::hasOverlap(byte index1, byte index2, bool remove)
   if (current->state == TL_STATE_POSTPONED)
   {
   #ifdef RO_CHECK
-    if (v1 + current->after < v1) return -1; //Rollover
+    if (v1 + current->after < v1) RO_ERROR(index1, -1);// return -1; //Rollover
   #endif
     v1 += current->after;
   }
@@ -133,15 +136,15 @@ char TTimeline::hasOverlap(byte index1, byte index2, bool remove)
   if (tls->state == TL_STATE_POSTPONED)
   {
   #ifdef RO_CHECK
-    if (v2 + tls->after < v2) return -2; //Rollover
+    if (v2 + tls->after < v2) RO_ERROR(index2, -2);//return -2; //Rollover
   #endif
     v2 += tls->after;
   }
 
 #ifdef RO_CHECK
   //Make sure that slot duration does not cause rollover
-  if (v1 + current->duration < v1) return -1;
-  if (v2 + tls->duration < v2) return -2;
+  if (v1 + current->duration < v1) RO_ERROR(index1, -1);//return -1;
+  if (v2 + tls->duration < v2) RO_ERROR(index2, -2);//return -2;
 #endif
 
   //Find out which starts first
@@ -164,7 +167,7 @@ char TTimeline::hasOverlap(byte index1, byte index2, bool remove)
       //1 must be postponed
     #ifdef ENABLE_64BIT
       v1 = (v2 + tls->duration) - current->start;
-      if (v1 > 0xFFFFFFFFUL) return -1; //Exceeds 32 bit limits
+      if (v1 > 0xFFFFFFFFUL) RO_ERROR(index1, -1);//return -1; //Exceeds 32 bit limits
     #else
       v1 = (v2 + tls->duration) - (current->start - st);
     #endif
@@ -180,7 +183,7 @@ char TTimeline::hasOverlap(byte index1, byte index2, bool remove)
       //2 must be postponed
     #ifdef ENABLE_64BIT
       v2 = (v1 + current->duration) - tls->start;
-      if (v2 > 0xFFFFFFFFUL) return -2; //Exceeds 32 bit limits
+      if (v2 > 0xFFFFFFFFUL) RO_ERROR(index2, -2);//return -2; //Exceeds 32 bit limits
     #else
       v2 = (v1 + current->duration) - (tls->start - st);
     #endif
@@ -277,7 +280,11 @@ void TTimeline::loop()
     }
     else if ((current->state == TL_STATE_POSTPONED) && (loopMillis - current->start >= current->after))
     {
+      #ifdef ENABLE_TIGHT_TIMING
+      current->start += current->after;
+      #else
       current->start = loopMillis;
+      #endif
       current->state = TL_STATE_ACTIVE;
       if (current->duration > 0) (*callback)(i, 0.0f); //Make sure that transition starts from 0.0f
     } 

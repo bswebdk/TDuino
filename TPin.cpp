@@ -23,12 +23,21 @@
 #include <pins_arduino.h>
 
 #ifdef TDUINO_DEBUG
+
 bool TPin::isPinValid(const char *token)
 {
   if ((pin != 255) && (mode != 255)) return true;
   TDuino_Error(TDUINO_ERROR_INVALID_PIN, pin, token);
   return false;
 }
+
+bool TPin::isPwmValid(int &value, const char *token)
+{
+  if (value >= 0) return true;
+  TDuino_Error(TDUINO_ERROR_BAD_PARAMETER, value, token);
+  return false;
+}
+
 #endif //TDUINO_DEBUG
 
 void TPin::defaults()
@@ -36,7 +45,6 @@ void TPin::defaults()
   TBase::defaults();
   this->pin = 255;
   this->mode = 255;
-  this->analog = false;
 }
 
 TPin::TPin() : TBase()
@@ -46,10 +54,11 @@ TPin::TPin() : TBase()
 
 void TPin::attach(byte pin, byte mode)
 {
+  pinMode(pin, mode);
   this->pin = pin;
   this->mode = mode;
-  this->analog = (pin >= A0) && (pin < A0 + NUM_ANALOG_INPUTS);
-  pinMode(pin, mode);
+  if ((pin >= A0) && (pin < A0 + NUM_ANALOG_INPUTS)) this->mode |= ANALOG_BIT;
+  if (digitalPinHasPWM(pin)) this->mode |= PWM_BIT;
 }
 
 void TPin::enable(byte on)
@@ -84,12 +93,13 @@ void TPin::on()
   digitalWrite(pin, HIGH);
 }
 
-void TPin::pwm(byte value)
+void TPin::pwm(int value)
 {
 #ifdef TDUINO_DEBUG
   const char *token = PSTR("TPin::pwm");
   if (!isPinValid(token)) return;
-  if (!hasPwm()) TDuino_Error(TDUINO_ERROR_INVALID_OPERATION, pin, token);
+  if (!hasPwm()) { TDuino_Error(TDUINO_ERROR_INVALID_OPERATION, pin, token); return; }
+  if (!isPwmValid(value, token)) return;
 #endif //TDUINO_DEBUG
   analogWrite(pin, value);
 }
@@ -99,10 +109,10 @@ int TPin::read()
 #ifdef TDUINO_DEBUG
   if (!isPinValid(PSTR("TPin::read"))) return 0;
 #endif //TDUINO_DEBUG
-  return analog ? analogRead(pin) : digitalRead(pin);
+  return (mode & ANALOG_BIT) ? analogRead(pin) : digitalRead(pin);
 }
 
-int TPin::state()
+byte TPin::state()
 {
 #ifdef TDUINO_DEBUG
   if (!isPinValid(PSTR("TPin::state"))) return 0;
@@ -112,20 +122,20 @@ int TPin::state()
 
 bool TPin::isAnalog()
 {
-  return analog;
+  return (mode & ANALOG_BIT);
 }
 
 bool TPin::hasPwm()
 {
-  return digitalPinHasPWM(pin);
+  return (mode & PWM_BIT);//digitalPinHasPWM(pin);
 }
 
-int TPin::getMode()
+byte TPin::getMode()
 {
-  return mode;
+  return mode & 0x0F;
 }
 
-int TPin::getPin()
+byte TPin::getPin()
 {
   return pin;
 }

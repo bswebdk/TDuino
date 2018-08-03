@@ -23,14 +23,15 @@
 #include "TDefs.h"
 //#ifdef TDUINO_DEBUG
 
-byte last_error = 0;
-unsigned long lastPrint = 0;
+//byte tduino_last_error = 255;
+unsigned long tduino_last_print = -600;
 
 void DebugPrint(bool error, byte number, int *extra, const char *token)
 {
   //Flood prevention
-  if ((last_error == error) && (millis() - lastPrint < 500)) return;
-  lastPrint = millis();
+  if ((tduino_last_error == number) && (millis() - tduino_last_print < 500)) return;
+  tduino_last_print = millis();
+  tduino_last_error = number;
   Serial.print(F("TDuino_"));
   Serial.print(error ? F("Error") : F("Warning"));
   Serial.print(F(" "));

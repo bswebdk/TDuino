@@ -37,6 +37,7 @@ class TButton : protected TPinInput {
 private:
   unsigned int delay1, delay2;
   unsigned long lastRepeat;
+  using TPinInput::setDeviation;
 
 protected:
 /// \cond HIDDEN_FIELD

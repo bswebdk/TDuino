@@ -31,6 +31,7 @@ void TButton::defaults()
 #endif
   delay1 = 0;
   delay2 = 0;
+  lastRepeat = 0;
 }
 
 void TButton::falling()
@@ -47,7 +48,8 @@ TButton::TButton()
 void TButton::attach(byte pin, byte mode UNUSED_ATTR)
 {
   TPinInput::attach(pin, INPUT_PULLUP);
-  analog = false;
+  this->mode = this->mode & ~ANALOG_BIT; //Clear analog bit
+  //analog = false;
 }
 
 bool TButton::isPressed()
@@ -74,6 +76,6 @@ void TButton::onRelease(TPinInputCallback callback)
 void TButton::loop()
 {
   TPinInput::loop();
-  //if pressed and use-delay and elapsed-since-last-repeat > delay then call falling()  
-  if ((lastState == LOW) && (delay1|delay2) && (loopMillis - lastRepeat >= ((lastRepeat == changeMillis) ? delay1 : delay2))) falling();
+  //if pressed and use-delay and elapsed-since-last-repeat > delay then call falling()
+  if ((lastState == LOW) && (delay1 | delay2) && (loopMillis - lastRepeat >= ((lastRepeat == changeMillis) ? delay1 : delay2))) falling();
 }

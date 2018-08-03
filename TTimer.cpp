@@ -181,7 +181,11 @@ void TTimer::loop()
     current = &this->timers[i];
     if (current->active && (loopMillis - current->lastMillis >= current->interval))
     {
+    #ifdef ENABLE_TIGHT_TIMING
+      current->lastMillis += current->interval;
+    #else 
       current->lastMillis = loopMillis;
+    #endif
       current->count++;
       (*callback)(i);
       if ((current->repeat > 0) && (current->count >= current->repeat)) current->active = false; 

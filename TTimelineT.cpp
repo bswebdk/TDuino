@@ -60,7 +60,11 @@ void TTimelineT<DATATYPE>::loop()
     }
     else if ((current->state == TL_STATE_POSTPONED) && (loopMillis - current->start >= current->after))
     {
+    #ifdef ENABLE_TIGHT_TIMING
+      current->start += current->after;
+    #else
       current->start = loopMillis;
+    #endif
       current->state = TL_STATE_ACTIVE;
       if (current->duration > 0) (*callback)(i, mapMin); //Make sure that transition starts from mapMin
     } 

@@ -30,6 +30,13 @@ adding "#include <TDuino.h>" to the include section (first lines) of your sketch
 * Increased memory usage
 
 ## Change Log
+__V1.5 -> 1.6__
+* Code optimizations for better performance.
+* Added tweak to enable tight timing.
+* Last error number not saved in TDefs.cpp::DebugPrint() (debug mode only).
+* Updated TPinInput for better handling of state deviation.
+* Datatype "byte" for setting PWM changed to "int" for boards with more than 8 bit resolution.
+
 __V1.4 -> V1.5__
 * Fixed missing "TL_" in TTimeline::restart() (debug mode only).
 * Added method TTimeline::hasOverlap().

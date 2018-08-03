@@ -37,8 +37,14 @@
 //Uncomment the following line to disable 32 bit rollover checks
 //#define DISABLE_32BIT_ROLLOVER_CHECKS
 
+//Uncomment the next line to enable tight timing
+//#define ENABLE_TIGHT_TIMING
+
 //If you want TDuino to use micros() rather than millis() for timing, you can uncomment the next line
 //#define TIMING_WITH_MICROS
+
+//Uncomment to enable floating point math for sampling in TPinInput
+//#define TPININPUT_FLOAT_MATH
 
 #ifdef __GNUG__
 #define UNUSED_ATTR __attribute__((unused))
@@ -101,8 +107,9 @@
  * 
  * \defgroup tduino_tweaks Tweaking TDuino
  * 
- * By uncommenting or modifying some of the defines in TDefs.h in the library folder,
- * you can change the behaviour of TDuino. The following defines can be used for tweaks:
+ * By uncommenting or modifying some of the #defines in the file TDefs.h which is found
+ * in the library folder, you can tweak the behaviour of TDuino. The following defines
+ * can be used for tweaks:
  * 
  * <div>&nbsp;</div>
  * \code
@@ -132,6 +139,27 @@
  * 
  * <div>&nbsp;</div>
  * \code
+ * //#define ENABLE_TIGHT_TIMING
+ * \endcode
+ * 
+ * By default TDuino will perform timings after "best effort". This means that any timed
+ * action may not actually be 100% accurate and a couple of milliseconds may be lost down 
+ * the line. If a timer is set to trigger each 100ms and the loop phase of the entire sketch
+ * is taking 200ms to execute, then the default behaviour is to handle the timer and set 
+ * the next timer event to trigger in 100ms minus the time it takes to execute the timer. 
+ * This means that the interval of the timer may actually be up to 200ms in a worst case 
+ * scenario and the missed timer intervals are lost.
+ * 
+ * If tight timing is enabled, timed events will be as close to the specified interval as
+ * possible and "missed" events will be postponed. This means that if a timer is set to 
+ * trigger with an interval of 100ms and the entire loop phase of the sketch takes 200ms to 
+ * execute, then the timer would have events "piling up". If at some point the loop phase 
+ * speeds up then the timer may trigger with intervals below 100ms in order to "catch up" 
+ * with the missed events. If the loop phase is continuously slower than an interval then 
+ * tight timing may cause issues due to 32 bit rollover.
+ * 
+ * <div>&nbsp;</div>
+ * \code
  * //#define TIMING_WITH_MICROS
  * \endcode
  * 
@@ -149,6 +177,18 @@
  * The same behaviour will be the case for: TPinOutput, TTimeline and TTimelineT. It will
  * also change the behaviour of debouncing used by TPinInput and TButton, so be careful
  * when using micros() for timing.
+ * 
+ * <div>&nbsp;</div>
+ * \code
+ * //#define TPININPUT_FLOAT_MATH
+ * \endcode
+ * 
+ * By default TPinInput (since V1.6) uses integer division to calculate the average value
+ * of multiple samples. This yields the best performance but since integer division
+ * always truncates any fraction instead of rounding it to nearest value it is not as
+ * accurate as floating point division. If you want to loose some performance in order to
+ * increase accuracy by a smidgeon, you can uncomment the line above and use floating
+ * point division.
  * 
  * @{ @}
  * 
