@@ -30,6 +30,9 @@ adding "#include <TDuino.h>" to the include section (first lines) of your sketch
 * Increased memory usage
 
 ## Change Log
+__V1.6 -> 1.6.1__
+* Fixed issue with undefined "tduino_last_error".
+
 __V1.5 -> 1.6__
 * Code optimizations for better performance.
 * Added tweak to enable tight timing.

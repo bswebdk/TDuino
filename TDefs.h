@@ -348,5 +348,5 @@ int freeRam ();
 /// @}
 
 #endif //TDUINO_DEBUG
-#endif //TDEBUG_H
+#endif //TDEFS_H
 

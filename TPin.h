@@ -27,7 +27,7 @@
 #define PWM_BIT 64
 
 /**
- * \brief Handles a I/O for a single pin.
+ * \brief Handles I/O for a single pin.
  * 
  * TPin is used to handle different I/O tasks for a pin.
  */

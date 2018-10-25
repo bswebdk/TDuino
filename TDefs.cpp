@@ -21,9 +21,9 @@
 
 
 #include "TDefs.h"
-//#ifdef TDUINO_DEBUG
+#ifdef TDUINO_DEBUG
 
-//byte tduino_last_error = 255;
+byte tduino_last_error = 255;
 unsigned long tduino_last_print = -600;
 
 void DebugPrint(bool error, byte number, int *extra, const char *token)
@@ -69,4 +69,4 @@ int freeRam () {
 #endif
 }
 
-//#endif //TDUINO_DEBUG
+#endif //TDUINO_DEBUG
